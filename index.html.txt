@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Coach — WTS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090d;--surf:#0d1018;--card:#111520;--elev:#161c28;
+  --b1:#1a2136;--b2:#222c42;
+  --blue:#2563c4;--blue-t:rgba(37,99,196,.11);--blue-t2:rgba(37,99,196,.22);--blue-br:#4a89e8;
+  --red:#e85438;--red-t:rgba(232,84,56,.12);
+  --yel:#f5b81c;--yel-t:rgba(245,184,28,.11);
+  --grn:#22c55e;--grn-t:rgba(34,197,94,.11);
+  --t1:#d8e4f4;--t2:#6b7fa0;--t3:#384459;--t4:#1f2d42;
+  --fn:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
+  --tpl-grille:#4a89e8;--tpl-strategie:#4ade80;--tpl-script:#f5b81c;--tpl-marche:#ff7c5c;
+}
+html,body{height:100%;background:var(--bg);font-family:var(--fn);color:var(--t1);overflow:hidden}
+
+/* ─── SCREENS ─── */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;transition:opacity .4s,transform .4s}
+.screen.hidden{opacity:0;pointer-events:none;transform:translateY(14px)}
+
+/* ─── ONBOARDING ─── */
+#ob{background:var(--bg);align-items:center;justify-content:center;overflow-y:auto}
+.ob-wrap{width:100%;max-width:480px;padding:40px 24px 60px}
+.ob-logo{display:flex;align-items:center;gap:10px;margin-bottom:44px}
+.ob-logo-ico{width:36px;height:36px;border-radius:10px;background:var(--blue);display:flex;align-items:center;justify-content:center}
+.ob-logo-ico svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+.ob-logo-name{font-size:15px;font-weight:600;color:var(--t1)}
+.ob-logo-sub{font-size:11px;color:var(--t3);margin-top:1px}
+.ob-prog{display:flex;gap:6px;margin-bottom:36px}
+.ob-dot{height:3px;border-radius:2px;background:var(--b2);flex:1;transition:background .3s}
+.ob-dot.done{background:var(--blue)}
+.ob-step{display:none;flex-direction:column;animation:fadeUp .3s ease}
+.ob-step.active{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.ob-ey{font-size:11px;font-weight:500;color:var(--blue-br);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;font-family:var(--fm)}
+.ob-title{font-size:26px;font-weight:600;color:var(--t1);line-height:1.2;margin-bottom:10px;letter-spacing:-.02em}
+.ob-sub{font-size:14px;color:var(--t2);line-height:1.6;margin-bottom:28px}
+.ob-btn{width:100%;padding:13px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-family:var(--fn);font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s;margin-top:4px}
+.ob-btn:hover{opacity:.88}
+.ob-btn:disabled{opacity:.35;cursor:not-allowed}
+.ob-ghost{width:100%;padding:11px;background:transparent;border:1px solid var(--b2);border-radius:12px;color:var(--t2);font-family:var(--fn);font-size:13px;cursor:pointer;margin-top:8px}
+.ob-ghost:hover{border-color:var(--b1);color:var(--t1)}
+.ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px}
+.ob-card{background:var(--card);border:1px solid var(--b1);border-radius:12px;padding:16px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px}
+.ob-card:hover{border-color:var(--b2);background:var(--elev)}
+.ob-card.sel{border-color:var(--blue);background:var(--blue-t)}
+.ob-card-ico{font-size:20px;margin-bottom:2px}
+.ob-card-t{font-size:13px;font-weight:500;color:var(--t1)}
+.ob-card-s{font-size:11px;color:var(--t3)}
+.ob-checks{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+.ob-check{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--card);border:1px solid var(--b1);border-radius:10px;cursor:pointer;transition:all .15s}
+.ob-check:hover{border-color:var(--b2)}
+.ob-check.sel{border-color:var(--blue);background:var(--blue-t)}
+.ob-chk-box{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--b2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.ob-check.sel .ob-chk-box{background:var(--blue);border-color:var(--blue)}
+.ob-chk-txt{font-size:13px;color:var(--t2)}
+.ob-check.sel .ob-chk-txt{color:var(--t1)}
+.ob-inp{width:100%;padding:12px 15px;background:var(--card);border:1px solid var(--b2);border-radius:10px;color:var(--t1);font-family:var(--fn);font-size:13px;outline:none;margin-bottom:24px;transition:border-color .15s}
+.ob-inp:focus{border-color:rgba(37,99,196,.5)}
+.ob-inp::placeholder{color:var(--t3)}
+.ob-vrows{margin-bottom:24px}
+.ob-vrow{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--b1)}
+.ob-vrow:last-child{border:none}
+.ob-vico{width:34px;height:34px;border-radius:9px;background:var(--blue-t);border:1px solid var(--blue-t2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ob-vico svg{width:15px;height:15px;stroke:var(--blue-br);fill:none;stroke-width:1.8;stroke-linecap:round}
+.ob-vt{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.ob-vs{font-size:12px;color:var(--t2);line-height:1.4}
+
+/* ─── ACCESS GATE ─── */
+.gate-overlay{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .4s}
+.gate-overlay.hidden{opacity:0;pointer-events:none}
+.gate-box{width:100%;max-width:420px;padding:0 24px}
+.gate-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;justify-content:center}
+.gate-logo-ico{width:36px;height:36px;border-radius:10px;background:var(--blue);display:flex;align-items:center;justify-content:center}
+.gate-logo-ico svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+.gate-logo-name{font-size:15px;font-weight:600;color:var(--t1)}
+.gate-logo-sub{font-size:11px;color:var(--t3);margin-top:1px}
+.gate-card{background:var(--card);border:1px solid var(--b1);border-radius:18px;padding:32px 28px;text-align:center}
+.gate-lock-ico{width:52px;height:52px;border-radius:15px;background:var(--blue-t);border:1px solid var(--blue-t2);display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.gate-lock-ico svg{width:24px;height:24px;stroke:var(--blue-br);fill:none;stroke-width:1.8;stroke-linecap:round}
+.gate-title{font-size:21px;font-weight:600;color:var(--t1);margin-bottom:8px;letter-spacing:-.02em}
+.gate-desc{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:24px}
+.gate-inp{width:100%;padding:14px 18px;background:var(--elev);border:1px solid var(--b2);border-radius:12px;color:var(--t1);font-family:var(--fm);font-size:14px;outline:none;text-align:center;letter-spacing:.1em;text-transform:uppercase;transition:border-color .2s;margin-bottom:10px}
+.gate-inp:focus{border-color:rgba(37,99,196,.55)}
+.gate-inp::placeholder{color:var(--t3);letter-spacing:0;font-family:var(--fn);text-transform:none;font-size:13px}
+.gate-inp.shake{animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.gate-err{font-size:12px;color:#ff7c5c;min-height:20px;margin-bottom:8px;line-height:1.4}
+.gate-submit{width:100%;padding:13px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-family:var(--fn);font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s;margin-bottom:12px}
+.gate-submit:hover{opacity:.88}
+.gate-hint{font-size:11px;color:var(--t3);line-height:1.5}
+.gate-hint a{color:var(--t2);text-decoration:none}
+.gate-hint a:hover{color:var(--t1)}
+
+/* ─── APP SHELL ─── */
+#app{display:none;flex-direction:row}
+#app.active{display:flex}
+
+/* ─── LEFT SIDEBAR ─── */
+.sb{width:220px;min-width:220px;height:100%;background:var(--surf);border-right:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden}
+.sb-top{padding:12px 10px 10px;border-bottom:1px solid var(--b1);flex-shrink:0}
+.sb-brand{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:4px 2px}
+.sb-bico{width:24px;height:24px;border-radius:6px;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-bico svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+.sb-bname{font-size:12px;font-weight:500;color:var(--t1)}
+.upload-btn{width:100%;padding:9px 12px;background:var(--blue);border:none;border-radius:9px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .15s}
+.upload-btn:hover{opacity:.88}
+.upload-btn svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+.upload-hint{font-size:10px;color:var(--t3);text-align:center;margin-top:7px;line-height:1.4}
+.sb-lbl{padding:10px 10px 5px;font-size:10px;font-weight:500;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;flex-shrink:0}
+.img-list{flex:1;overflow-y:auto;padding:0 6px;scrollbar-width:none}
+.img-list::-webkit-scrollbar{display:none}
+.img-item{border-radius:9px;overflow:hidden;margin-bottom:8px;border:1px solid var(--b1);cursor:pointer;transition:all .15s;background:var(--card)}
+.img-item:hover{border-color:var(--b2)}
+.img-item.active{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+.img-thumb{height:84px;background:var(--elev);overflow:hidden;position:relative}
+.img-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.img-meta{padding:7px 9px}
+.img-name{font-size:11px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.img-time{font-size:10px;color:var(--t3);margin-top:1px}
+.img-status{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:10px;padding:2px 7px;border-radius:4px}
+.img-status.pending{background:var(--yel-t);color:#f5b81c}
+.img-status.analyzed{background:var(--grn-t);color:#4ade80}
+.img-del{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:5px;background:rgba(7,9,13,.8);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity .15s}
+.img-thumb:hover .img-del{opacity:1}
+.img-del svg{width:10px;height:10px;stroke:var(--t2);fill:none;stroke-width:2;stroke-linecap:round}
+.sb-ft{padding:10px;border-top:1px solid var(--b1);flex-shrink:0}
+.uava-row{display:flex;align-items:center;gap:8px}
+.uava{width:26px;height:26px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.uname{font-size:12px;color:var(--t2);font-weight:500}
+.uplan{font-size:10px;color:var(--t3)}
+
+/* ─── CHAT ─── */
+.chat{flex:1;height:100%;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);min-width:0}
+.chat-top{height:46px;min-height:46px;background:var(--surf);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 16px;gap:8px;flex-shrink:0}
+.ct-logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.ct-logo-ico{width:22px;height:22px;border-radius:6px;background:var(--blue);display:flex;align-items:center;justify-content:center}
+.ct-logo-ico svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+.ct-logo-name{font-size:13px;font-weight:500;color:var(--t1)}
+.ct-status{display:flex;align-items:center;gap:5px;font-size:11px;color:#4ade80;margin-left:auto}
+.ct-sdot{width:5px;height:5px;border-radius:50%;background:var(--grn)}
+.kb-pill{display:flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;background:var(--yel-t);border:1px solid rgba(245,184,28,.2);font-size:11px;color:#f5b81c}
+.kb-dot{width:5px;height:5px;border-radius:50%;background:var(--yel)}
+
+/* Template selector pill */
+.tpl-active-pill{display:none;align-items:center;gap:6px;padding:3px 8px 3px 10px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;max-width:180px}
+.tpl-active-pill.show{display:flex}
+.tpl-pill-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tpl-pill-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.tpl-pill-x{cursor:pointer;font-size:13px;opacity:.7;flex-shrink:0;line-height:1;padding:0 2px}
+.tpl-pill-x:hover{opacity:1}
+
+.tpl-sel-wrap{position:relative}
+.tpl-sel-btn{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:7px;background:var(--elev);border:1px solid var(--b2);color:var(--t2);font-size:11px;font-family:var(--fn);cursor:pointer;transition:all .12s;white-space:nowrap}
+.tpl-sel-btn:hover{border-color:var(--b1);color:var(--t1)}
+.tpl-sel-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;flex-shrink:0}
+.tpl-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:var(--card);border:1px solid var(--b2);border-radius:10px;min-width:230px;z-index:90;overflow:hidden;display:none;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.tpl-dropdown.open{display:block}
+.tpl-dd-head{padding:8px 12px;font-size:10px;font-weight:500;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--b1)}
+.tpl-dd-section{padding:4px 0}
+.tpl-dd-section-lbl{padding:6px 12px 3px;font-size:10px;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}
+.tpl-dd-item{display:flex;align-items:center;gap:9px;padding:8px 12px;cursor:pointer;transition:background .1s}
+.tpl-dd-item:hover{background:var(--elev)}
+.tpl-dd-item.sel{background:var(--blue-t)}
+.tpl-dd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tpl-dd-name{font-size:12px;color:var(--t1);flex:1}
+.tpl-dd-badge{font-size:10px;color:var(--t3);padding:1px 6px;border-radius:4px;background:var(--elev)}
+.tpl-dd-none{padding:14px 12px;font-size:12px;color:var(--t3);text-align:center}
+.tpl-dd-clear{padding:8px 12px;border-top:1px solid var(--b1);font-size:11px;color:var(--t2);cursor:pointer;text-align:center;transition:background .1s}
+.tpl-dd-clear:hover{background:var(--elev);color:var(--t1)}
+
+.topbar-btn{padding:4px 9px;border-radius:6px;background:transparent;border:1px solid var(--b2);color:var(--t3);font-size:11px;cursor:pointer;font-family:var(--fn);transition:all .12s}
+.topbar-btn:hover{color:var(--t2);border-color:var(--b1)}
+
+.msgs{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--bg);scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
+.msgs::-webkit-scrollbar{width:3px}
+.msgs::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.msgs-inner{padding:24px 32px 16px;display:flex;flex-direction:column;gap:20px}
+
+.mrow{display:flex;gap:11px;align-items:flex-start}
+.mrow.u{flex-direction:row-reverse}
+.ava{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:600}
+.ava.ai{background:var(--blue)}
+.ava.ai svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+.ava.hu{background:var(--elev);border:1px solid var(--b2);color:var(--t2)}
+.mcol{display:flex;flex-direction:column;gap:7px;max-width:82%;min-width:0}
+.mcol.u{align-items:flex-end;margin-left:auto}
+.bub{padding:13px 16px;font-size:13px;line-height:1.72;background:var(--card);border:1px solid var(--b1);border-radius:4px 14px 14px 14px;color:var(--t1);word-wrap:break-word}
+.bub.u{background:var(--blue);border-color:var(--blue);border-radius:14px 4px 14px 14px;color:#fff}
+.bub b{font-weight:500;color:#e8f0ff}
+.bub.u b{color:#fff}
+.src-ref{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:3px 9px;border-radius:6px;background:var(--yel-t);border:1px solid rgba(245,184,28,.2);font-size:10px;color:#f5b81c;font-family:var(--fm)}
+.src-ref svg{width:10px;height:10px;stroke:#f5b81c;fill:none;stroke-width:1.8;stroke-linecap:round;flex-shrink:0}
+.tpl-ref{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:3px 9px;border-radius:6px;font-size:10px;font-family:var(--fm);border:1px solid}
+.chart-preview{border-radius:10px;overflow:hidden;border:1px solid var(--b2);max-width:280px;margin-bottom:4px}
+.chart-preview img{width:100%;display:block;max-height:180px;object-fit:cover}
+.chart-label{padding:7px 11px;font-size:11px;color:var(--t3);background:var(--card);display:flex;align-items:center;gap:6px}
+.chart-label svg{width:11px;height:11px;stroke:var(--t3);fill:none;stroke-width:1.5;flex-shrink:0}
+.qbtns{display:flex;gap:6px;flex-wrap:wrap}
+.qb{padding:5px 11px;border-radius:7px;border:1px solid var(--b2);background:transparent;color:var(--t2);font-size:11px;font-family:var(--fn);cursor:pointer;transition:all .12s}
+.qb:hover{border-color:rgba(37,99,196,.5);color:var(--blue-br);background:var(--blue-t)}
+.qb.w:hover{border-color:rgba(232,84,56,.4);color:#ff7c5c;background:var(--red-t)}
+.tbub{padding:12px 15px;border-radius:4px 14px 14px 14px;background:var(--card);border:1px solid var(--b1);display:flex;gap:4px;align-items:center}
+.td{width:5px;height:5px;border-radius:50%;background:var(--t3);animation:pulse 1.2s infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+
+.inpzone{flex-shrink:0;border-top:1px solid var(--b1);padding:11px 32px 15px;background:var(--bg)}
+.img-queued{display:none;align-items:center;gap:8px;margin-bottom:8px;padding:6px 10px;background:var(--card);border:1px solid var(--blue-t2);border-radius:7px;max-width:240px}
+.img-queued.show{display:flex}
+.img-queued-thumb{width:32px;height:32px;border-radius:5px;object-fit:cover;flex-shrink:0}
+.img-queued-name{font-size:11px;color:var(--t2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rm-q{border:none;background:transparent;color:var(--t3);cursor:pointer;font-size:12px;width:16px;height:16px;display:flex;align-items:center;justify-content:center}
+.ibox{display:flex;align-items:flex-end;gap:8px;background:var(--card);border:1px solid var(--b2);border-radius:12px;padding:8px 9px;transition:border-color .15s}
+.ibox:focus-within{border-color:rgba(37,99,196,.45)}
+.ti{flex:1;background:none;border:none;outline:none;font-family:var(--fn);font-size:13px;color:var(--t1);resize:none;min-height:32px;max-height:110px;line-height:1.6;padding:3px 0}
+.ti::placeholder{color:var(--t3)}
+.ibtns{display:flex;gap:3px;align-items:center;flex-shrink:0;padding-bottom:1px}
+.icb{width:30px;height:30px;border-radius:7px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .12s}
+.icb:hover{background:var(--elev)}
+.icb svg{width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.sndbtn{width:30px;height:30px;border-radius:7px;border:none;background:var(--blue);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .12s}
+.sndbtn:hover{opacity:.85}
+.sndbtn:disabled{opacity:.4;cursor:not-allowed}
+.sndbtn svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+.ihint{margin-top:6px;font-size:10px;color:var(--t4);text-align:center}
+
+/* ─── RIGHT PANEL ─── */
+.rp{width:252px;min-width:252px;height:100%;background:var(--surf);border-left:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden}
+.rp-h{padding:12px 14px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.rp-title{font-size:12px;font-weight:500;color:var(--t2)}
+.rp-scroll{flex:1;overflow-y:auto;padding:12px;scrollbar-width:none}
+.rp-scroll::-webkit-scrollbar{display:none}
+.rp-sec{margin-bottom:16px}
+.rp-lbl{font-size:10px;font-weight:500;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+.mktcard{background:var(--card);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;margin-bottom:7px}
+.mkt-name{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.mkt-badge{padding:2px 6px;border-radius:4px;font-size:10px;background:var(--blue-t);border:1px solid var(--blue-t2);color:var(--blue-br);font-family:var(--fm)}
+.mkt-row{display:flex;justify-content:space-between;padding:3px 0;font-size:11px;border-bottom:1px solid var(--b1)}
+.mkt-row:last-child{border:none}
+.mkt-k{color:var(--t2)}.mkt-v{color:var(--t1);font-family:var(--fm)}
+.mkt-btns{display:flex;gap:5px;margin-top:8px}
+.mkt-btn{flex:1;padding:6px;border-radius:7px;border:1px solid var(--b2);background:transparent;color:var(--t2);font-size:11px;font-family:var(--fn);cursor:pointer;transition:all .12s;text-align:center}
+.mkt-btn:hover{border-color:rgba(37,99,196,.4);color:var(--blue-br);background:var(--blue-t)}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.ctag2{display:inline-flex;align-items:center;padding:3px 8px;border-radius:6px;background:var(--blue-t);border:1px solid var(--blue-t2);font-size:11px;color:var(--blue-br);cursor:pointer;transition:background .12s}
+.ctag2:hover{background:var(--blue-t2)}
+.skill{margin-bottom:9px}
+.sk-h{display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px}
+.sk-n{color:var(--t2)}.sk-p{color:var(--t3);font-family:var(--fm)}
+.sk-bar{height:4px;background:var(--elev);border-radius:2px;overflow:hidden}
+.sk-f{height:100%;border-radius:2px;transition:width .5s ease}
+.sk-note{margin-top:7px;padding:8px 10px;background:var(--red-t);border:1px solid rgba(232,84,56,.18);border-radius:7px;font-size:11px;color:#ff7c5c;line-height:1.5}
+.qq{width:100%;padding:7px 10px;background:var(--card);border:1px solid var(--b1);border-radius:7px;font-family:var(--fn);font-size:11px;color:var(--t2);cursor:pointer;text-align:left;margin-bottom:5px;transition:all .12s;line-height:1.4;display:flex;align-items:center;gap:6px}
+.qq:hover{border-color:rgba(37,99,196,.35);color:var(--t1);background:var(--elev)}
+.qq-arr{color:var(--t3);font-size:11px;flex-shrink:0}
+.gs-btn{width:100%;padding:9px 12px;background:var(--yel-t);border:1px solid rgba(245,184,28,.22);border-radius:8px;font-family:var(--fn);font-size:11px;font-weight:500;color:#f5b81c;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;transition:background .12s}
+.gs-btn:hover{background:rgba(245,184,28,.18)}
+.gs-btn svg{width:13px;height:13px;stroke:#f5b81c;fill:none;stroke-width:1.8;stroke-linecap:round;flex-shrink:0}
+.gs-sub{font-size:10px;color:rgba(245,184,28,.6);font-weight:400;margin-top:1px}
+
+/* ─── ADMIN OVERLAY ─── */
+.admin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:200}
+.admin-overlay.open{display:flex}
+.admin-login{background:var(--card);border:1px solid var(--b2);border-radius:16px;padding:32px;width:360px}
+.admin-login-logo{display:flex;align-items:center;gap:8px;margin-bottom:24px}
+.admin-login-ico{width:32px;height:32px;border-radius:8px;background:var(--red-t);border:1px solid rgba(232,84,56,.2);display:flex;align-items:center;justify-content:center}
+.admin-login-ico svg{width:14px;height:14px;stroke:#ff7c5c;fill:none;stroke-width:2;stroke-linecap:round}
+.admin-login-t{font-size:14px;font-weight:500;color:var(--t1)}
+.admin-login-s{font-size:11px;color:var(--t3)}
+.admin-title{font-size:18px;font-weight:600;color:var(--t1);margin-bottom:6px}
+.admin-sub{font-size:13px;color:var(--t2);margin-bottom:22px;line-height:1.5}
+.admin-inp{width:100%;padding:11px 14px;background:var(--elev);border:1px solid var(--b2);border-radius:9px;color:var(--t1);font-family:var(--fm);font-size:13px;outline:none;margin-bottom:12px;transition:border-color .15s;letter-spacing:.08em}
+.admin-inp:focus{border-color:rgba(232,84,56,.4)}
+.admin-inp::placeholder{color:var(--t3);letter-spacing:0;font-family:var(--fn)}
+.admin-err{font-size:12px;color:#ff7c5c;margin-bottom:12px;display:none}
+.admin-btn{width:100%;padding:11px;background:var(--red);border:none;border-radius:9px;color:#fff;font-family:var(--fn);font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.admin-btn:hover{opacity:.88}
+.admin-cancel{width:100%;padding:10px;background:transparent;border:1px solid var(--b2);border-radius:9px;color:var(--t2);font-family:var(--fn);font-size:13px;cursor:pointer;margin-top:8px}
+
+.admin-panel{background:var(--surf);border:1px solid var(--b1);border-radius:16px;width:920px;height:86vh;display:none;flex-direction:column;overflow:hidden}
+.admin-panel.open{display:flex}
+.admin-pbar{height:50px;background:var(--card);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+.admin-pbar-ico{width:30px;height:30px;border-radius:8px;background:var(--red-t);border:1px solid rgba(232,84,56,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.admin-pbar-ico svg{width:13px;height:13px;stroke:#ff7c5c;fill:none;stroke-width:2;stroke-linecap:round}
+.admin-pbar-t{font-size:13px;font-weight:500;color:var(--t1)}
+.admin-pbar-s{font-size:11px;color:var(--t3)}
+.admin-close{margin-left:auto;width:28px;height:28px;border-radius:7px;border:none;background:var(--elev);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.admin-close svg{width:12px;height:12px;stroke:var(--t2);fill:none;stroke-width:2;stroke-linecap:round}
+
+/* Admin tabs */
+.admin-tabs{display:flex;background:var(--card);border-bottom:1px solid var(--b1);flex-shrink:0}
+.a-tab{padding:11px 18px;font-size:12px;font-weight:500;border:none;background:transparent;font-family:var(--fn);cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
+.a-tab.on{color:var(--t1);border-bottom-color:var(--blue)}
+.a-tab:hover:not(.on){color:var(--t2)}
+
+/* KB tab */
+.admin-body{flex:1;display:none;overflow:hidden}
+.admin-body.open{display:flex}
+.admin-left{width:280px;border-right:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.admin-left-top{padding:14px 12px;border-bottom:1px solid var(--b1);flex-shrink:0}
+.admin-left-top h3{font-size:12px;font-weight:500;color:var(--t2);margin-bottom:10px}
+.addbtn{width:100%;padding:8px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:opacity .15s}
+.addbtn:hover{opacity:.88}
+.addbtn svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round}
+.src-list{flex:1;overflow-y:auto;padding:8px;scrollbar-width:none}
+.src-list::-webkit-scrollbar{display:none}
+.src-row{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:3px;border:1px solid transparent;transition:all .12s}
+.src-row:hover{background:var(--elev)}
+.src-row.sel{background:var(--blue-t);border-color:var(--blue-t2)}
+.src-row-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.src-row-ico svg{width:13px;height:13px;fill:none;stroke-width:1.8;stroke-linecap:round}
+.ico-text{background:var(--blue-t);border:1px solid var(--blue-t2)}
+.ico-text svg{stroke:var(--blue-br)}
+.ico-video{background:var(--red-t);border:1px solid rgba(232,84,56,.2)}
+.ico-video svg{stroke:#ff7c5c}
+.ico-rule{background:var(--grn-t);border:1px solid rgba(34,197,94,.18)}
+.ico-rule svg{stroke:#4ade80}
+.src-row-info{flex:1;min-width:0}
+.src-row-title{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src-row-meta{font-size:10px;color:var(--t3);margin-top:1px}
+.src-toggle{width:24px;height:14px;border-radius:7px;background:var(--b2);position:relative;cursor:pointer;border:none;transition:background .2s;flex-shrink:0}
+.src-toggle.on{background:var(--blue)}
+.src-toggle::after{content:'';position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:#fff;transition:transform .2s}
+.src-toggle.on::after{transform:translateX(10px)}
+.admin-left-stats{padding:10px 12px;border-top:1px solid var(--b1);flex-shrink:0}
+.stat-row{display:flex;gap:6px}
+.stat-box{flex:1;background:var(--elev);border-radius:7px;padding:8px;text-align:center}
+.stat-val{font-size:16px;font-weight:600;color:var(--t1);font-family:var(--fm)}
+.stat-lbl{font-size:9px;color:var(--t3);margin-top:1px}
+.admin-right{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.admin-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--t3);padding:40px;text-align:center}
+.admin-empty svg{width:44px;height:44px;stroke:var(--t3);fill:none;stroke-width:1.2;stroke-linecap:round}
+.admin-empty p{font-size:13px;color:var(--t2);line-height:1.5}
+.admin-editor{flex:1;display:none;flex-direction:column;overflow:hidden}
+.admin-editor.open{display:flex}
+.editor-top{padding:14px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.editor-title-inp{flex:1;background:none;border:none;outline:none;font-family:var(--fn);font-size:14px;font-weight:500;color:var(--t1)}
+.editor-title-inp::placeholder{color:var(--t3)}
+.editor-type-sel{padding:4px 10px;border-radius:6px;background:var(--elev);border:1px solid var(--b2);color:var(--t2);font-size:11px;font-family:var(--fn);outline:none;cursor:pointer}
+.editor-del{padding:4px 10px;border-radius:6px;background:var(--red-t);border:1px solid rgba(232,84,56,.2);color:#ff7c5c;font-size:11px;font-family:var(--fn);cursor:pointer}
+.editor-content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.editor-dropzone{margin:14px 18px;padding:18px;text-align:center;border:1.5px dashed var(--b2);border-radius:10px;cursor:pointer;transition:all .2s;background:var(--card);flex-shrink:0}
+.editor-dropzone:hover,.editor-dropzone.drag{border-color:var(--blue);background:var(--blue-t)}
+.editor-dropzone-t{font-size:13px;font-weight:500;color:var(--t2);margin-bottom:3px}
+.editor-dropzone-s{font-size:11px;color:var(--t3)}
+.editor-textarea{flex:1;width:100%;padding:16px 20px;background:none;border:none;outline:none;font-family:var(--fn);font-size:13px;color:var(--t2);line-height:1.75;resize:none;scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
+.editor-textarea::-webkit-scrollbar{width:3px}
+.editor-textarea::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.editor-textarea::placeholder{color:var(--t3)}
+.editor-footer{padding:10px 18px;border-top:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.editor-footer-meta{font-size:11px;color:var(--t3)}
+.editor-save{padding:7px 18px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.editor-save:hover{opacity:.88}
+
+/* Codes tab */
+.codes-pane{flex:1;display:none;overflow-y:auto;padding:20px;flex-direction:column;gap:14px;scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
+.codes-pane::-webkit-scrollbar{width:3px}
+.codes-pane::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.codes-pane.open{display:flex}
+.cs-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.cs-box{background:var(--card);border:1px solid var(--b1);border-radius:9px;padding:14px;text-align:center}
+.cs-val{font-size:22px;font-weight:600;color:var(--t1);font-family:var(--fm)}
+.cs-lbl{font-size:10px;color:var(--t3);margin-top:3px}
+.codes-how{background:var(--blue-t);border:1px solid var(--blue-t2);border-radius:10px;padding:14px 16px;font-size:12px;color:var(--t2);line-height:1.65}
+.codes-how b{color:var(--t1);font-weight:500}
+.codes-add-block{background:var(--card);border:1px solid var(--b1);border-radius:12px;padding:16px}
+.sec-lbl{font-size:10px;font-weight:500;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.code-inp-row{display:flex;gap:8px;margin-bottom:10px}
+.cinp{flex:1;padding:9px 12px;background:var(--elev);border:1px solid var(--b2);border-radius:8px;color:var(--t1);font-family:var(--fn);font-size:12px;outline:none;transition:border-color .15s}
+.cinp:focus{border-color:rgba(37,99,196,.5)}
+.cinp::placeholder{color:var(--t3)}
+.cinp.mono{font-family:var(--fm);letter-spacing:.05em;text-transform:uppercase}
+.code-add-actions{display:flex;gap:8px;align-items:center}
+.gen-btn{padding:8px 14px;border-radius:7px;background:var(--elev);border:1px solid var(--b2);color:var(--t2);font-size:11px;font-family:var(--fn);cursor:pointer;transition:all .12s}
+.gen-btn:hover{color:var(--t1);border-color:var(--b1)}
+.create-btn{padding:8px 18px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:500;cursor:pointer;margin-left:auto}
+.code-list{display:flex;flex-direction:column;gap:6px}
+.code-item{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--card);border:1px solid var(--b1);border-radius:10px}
+.code-item.inactive{opacity:.5}
+.code-val{font-family:var(--fm);font-size:12px;color:var(--t1);letter-spacing:.06em;cursor:pointer;padding:3px 8px;border-radius:6px;background:var(--elev);border:1px solid var(--b2);flex-shrink:0;transition:all .15s}
+.code-val:hover{border-color:rgba(37,99,196,.4);color:var(--blue-br)}
+.code-info{flex:1;min-width:0}
+.code-name{font-size:12px;font-weight:500;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.code-meta{font-size:10px;color:var(--t3);margin-top:1px}
+.used-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sw{width:28px;height:16px;border-radius:8px;background:var(--b2);position:relative;cursor:pointer;border:none;transition:background .2s;flex-shrink:0}
+.sw.on{background:var(--grn)}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw.on::after{transform:translateX(12px)}
+.del-btn{width:26px;height:26px;border-radius:7px;border:none;background:var(--red-t);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.del-btn svg{width:10px;height:10px;stroke:#ff7c5c;fill:none;stroke-width:2;stroke-linecap:round}
+.no-codes{text-align:center;padding:32px;font-size:13px;color:var(--t3);background:var(--card);border:1px solid var(--b1);border-radius:10px}
+
+/* ─── TEMPLATES TAB ─── */
+.tpl-pane{flex:1;display:none;overflow:hidden}
+.tpl-pane.open{display:flex}
+.tpl-layout{flex:1;display:grid;grid-template-columns:260px 1fr;overflow:hidden}
+
+/* Left list */
+.tpl-left{border-right:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden}
+.tpl-left-top{padding:14px 12px;border-bottom:1px solid var(--b1);flex-shrink:0}
+.tpl-left-top h3{font-size:12px;font-weight:500;color:var(--t2);margin-bottom:10px}
+.tpl-type-tabs{display:flex;flex-wrap:wrap;gap:4px}
+.ttype{padding:3px 9px;border-radius:6px;border:1px solid var(--b2);background:transparent;color:var(--t3);font-size:11px;font-family:var(--fn);cursor:pointer;transition:all .12s}
+.ttype.on{background:var(--blue-t);border-color:var(--blue-t2);color:var(--blue-br)}
+.ttype:hover:not(.on){color:var(--t2);border-color:var(--b1)}
+.tpl-list{flex:1;overflow-y:auto;padding:8px;scrollbar-width:none}
+.tpl-list::-webkit-scrollbar{display:none}
+.tpl-row{padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:3px;border:1px solid transparent;transition:all .12s}
+.tpl-row:hover{background:var(--elev)}
+.tpl-row.sel{background:var(--blue-t);border-color:var(--blue-t2)}
+.tpl-row-head{display:flex;align-items:center;gap:7px}
+.tpl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-grille{background:var(--tpl-grille)}
+.dot-strategie{background:var(--tpl-strategie)}
+.dot-script{background:var(--tpl-script)}
+.dot-marche{background:var(--tpl-marche)}
+.tpl-row-title{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.tpl-row-auto{font-size:9px;padding:1px 5px;border-radius:4px;background:var(--grn-t);color:#4ade80;border:1px solid rgba(34,197,94,.18);flex-shrink:0}
+.tpl-row-meta{font-size:10px;color:var(--t3);margin-top:2px;margin-left:15px}
+.tpl-add-btn{margin:6px 8px 8px;padding:8px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:opacity .15s;flex-shrink:0}
+.tpl-add-btn:hover{opacity:.88}
+.tpl-add-btn svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round}
+
+/* Right editor */
+.tpl-right{display:flex;flex-direction:column;overflow:hidden}
+.tpl-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px;text-align:center}
+.tpl-empty svg{width:44px;height:44px;stroke:var(--t3);fill:none;stroke-width:1.2;stroke-linecap:round}
+.tpl-empty-desc{font-size:13px;color:var(--t2);line-height:1.5}
+.tpl-legend{display:flex;flex-direction:column;gap:6px;background:var(--elev);border-radius:10px;padding:14px;max-width:320px;font-size:12px;color:var(--t2);line-height:1.6}
+.tpl-legend-row{display:flex;align-items:center;gap:8px}
+.tpl-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+.tpl-editor{flex:1;display:none;flex-direction:column;overflow:hidden}
+.tpl-editor.open{display:flex}
+.tpl-editor-top{padding:14px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap}
+.tpl-title-inp{flex:1;min-width:140px;background:none;border:none;outline:none;font-family:var(--fn);font-size:14px;font-weight:500;color:var(--t1)}
+.tpl-title-inp::placeholder{color:var(--t3)}
+.tpl-type-sel{padding:4px 10px;border-radius:6px;background:var(--elev);border:1px solid var(--b2);color:var(--t2);font-size:11px;font-family:var(--fn);outline:none;cursor:pointer}
+.tpl-auto-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2)}
+.auto-sw{width:28px;height:16px;border-radius:8px;background:var(--b2);position:relative;cursor:pointer;border:none;transition:background .2s;flex-shrink:0}
+.auto-sw.on{background:var(--grn)}
+.auto-sw::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .2s}
+.auto-sw.on::after{transform:translateX(12px)}
+.tpl-del-btn{padding:4px 10px;border-radius:6px;background:var(--red-t);border:1px solid rgba(232,84,56,.2);color:#ff7c5c;font-size:11px;font-family:var(--fn);cursor:pointer}
+
+/* Structured fields (grille, strategie, script, marche) */
+.tpl-fields{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
+.tpl-fields::-webkit-scrollbar{width:3px}
+.tpl-fields::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.tpl-form{padding:16px 20px;display:flex;flex-direction:column;gap:11px}
+.tpl-form-info{font-size:12px;color:var(--t2);line-height:1.55;padding:10px 13px;background:var(--elev);border-radius:8px;border-left:3px solid var(--blue)}
+.tpl-field{display:flex;flex-direction:column;gap:4px}
+.tpl-field-lbl{font-size:10px;font-weight:500;color:var(--t3);letter-spacing:.06em;text-transform:uppercase}
+.tpl-field-inp{padding:9px 12px;background:var(--elev);border:1px solid var(--b2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:12px;outline:none;transition:border-color .15s;resize:none;line-height:1.55;width:100%}
+.tpl-field-inp:focus{border-color:rgba(37,99,196,.5);color:var(--t1)}
+.tpl-field-inp::placeholder{color:var(--t3)}
+.tpl-field-hint{font-size:10px;color:var(--t4);line-height:1.4}
+.tpl-editor-footer{padding:10px 18px;border-top:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tpl-footer-meta{font-size:11px;color:var(--t3)}
+.tpl-save-btn{padding:7px 18px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.tpl-save-btn:hover{opacity:.88}
+
+/* Modal + toast */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--b2);border-radius:14px;padding:26px;width:100%;max-width:380px}
+.modal-t{font-size:15px;font-weight:600;color:var(--t1);margin-bottom:6px}
+.modal-s{font-size:13px;color:var(--t2);line-height:1.5;margin-bottom:18px}
+.modal-inp{width:100%;padding:10px 13px;background:var(--elev);border:1px solid var(--b2);border-radius:8px;color:var(--t1);font-family:var(--fm);font-size:12px;outline:none;margin-bottom:12px;transition:border-color .15s}
+.modal-inp:focus{border-color:rgba(37,99,196,.5)}
+.modal-inp::placeholder{color:var(--t3);font-family:var(--fn)}
+.modal-row{display:flex;gap:8px}
+.mbtn{flex:1;padding:9px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.mbtn:hover{opacity:.88}
+.mbtn-g{flex:1;padding:9px;background:transparent;border:1px solid var(--b2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:13px;cursor:pointer}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card);border:1px solid var(--b2);border-radius:10px;padding:10px 18px;font-size:13px;color:var(--t1);opacity:0;transition:all .3s;z-index:400;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ════ ONBOARDING ════ -->
+<div id="ob" class="screen">
+  <div class="ob-wrap">
+    <div class="ob-logo">
+      <div class="ob-logo-ico"><svg viewBox="0 0 18 18"><polyline points="1,14 6,8 10,10 17,3"/><circle cx="17" cy="3" r="1.5" fill="#fff" stroke="none"/></svg></div>
+      <div><div class="ob-logo-name">Trading Coach</div><div class="ob-logo-sub">by WTS · Erwan Signé</div></div>
+    </div>
+    <div class="ob-prog"><div class="ob-dot done" id="p0"></div><div class="ob-dot" id="p1"></div><div class="ob-dot" id="p2"></div><div class="ob-dot" id="p3"></div><div class="ob-dot" id="p4"></div></div>
+    <div class="ob-step active" id="s0">
+      <div class="ob-ey">Bienvenue</div>
+      <div class="ob-title">Ton coach trading personnel, alimenté par la méthode WTS.</div>
+      <div class="ob-sub">Pose tes questions, soumets tes charts. Le coach analyse, corrige et t'interroge — avec ta méthode exacte.</div>
+      <div class="ob-vrows">
+        <div class="ob-vrow"><div class="ob-vico"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5"/><polyline points="2,7 8,11 14,7"/></svg></div><div><div class="ob-vt">Analyse de charts</div><div class="ob-vs">Envoie un screenshot depuis la sidebar. Le coach applique une grille d'analyse WTS et t'interroge.</div></div></div>
+        <div class="ob-vrow"><div class="ob-vico"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v4l2.5 1.5"/></svg></div><div><div class="ob-vt">Templates de coaching</div><div class="ob-vs">Grilles d'analyse, stratégies complètes, scripts de débriefing — activables en un clic.</div></div></div>
+        <div class="ob-vrow" style="border:none"><div class="ob-vico"><svg viewBox="0 0 16 16"><path d="M2 12l4-4 3 3 5-7"/></svg></div><div><div class="ob-vt">Progression trackée</div><div class="ob-vs">Suivi de tes compétences — Order Flow, timing, risque — session après session.</div></div></div>
+      </div>
+      <button class="ob-btn" onclick="nextStep()">Commencer →</button>
+    </div>
+    <div class="ob-step" id="s1">
+      <div class="ob-ey">Étape 1 sur 3</div>
+      <div class="ob-title">Comment tu t'appelles ?</div>
+      <div class="ob-sub">Le coach s'adressera à toi par ton prénom.</div>
+      <input class="ob-inp" id="ob-name" type="text" placeholder="Ton prénom..." maxlength="30" onkeydown="if(event.key==='Enter')nextStep()">
+      <button class="ob-btn" onclick="nextStep()">Continuer →</button>
+      <button class="ob-ghost" onclick="S.name='Trader';nextStep()">Passer</button>
+    </div>
+    <div class="ob-step" id="s2">
+      <div class="ob-ey">Étape 2 sur 3</div>
+      <div class="ob-title">Ton niveau actuel ?</div>
+      <div class="ob-sub">Le coach adapte son exigence en conséquence.</div>
+      <div class="ob-grid">
+        <div class="ob-card" data-val="debutant" onclick="selCard(this)"><div class="ob-card-ico">🌱</div><div class="ob-card-t">Débutant</div><div class="ob-card-s">&lt;1 an</div></div>
+        <div class="ob-card" data-val="intermediaire" onclick="selCard(this)"><div class="ob-card-ico">⚡</div><div class="ob-card-t">Intermédiaire</div><div class="ob-card-s">1–3 ans</div></div>
+        <div class="ob-card" data-val="avance" onclick="selCard(this)"><div class="ob-card-ico">🎯</div><div class="ob-card-t">Avancé</div><div class="ob-card-s">3–5 ans</div></div>
+        <div class="ob-card" data-val="pro" onclick="selCard(this)"><div class="ob-card-ico">🏛</div><div class="ob-card-t">Professionnel</div><div class="ob-card-s">5+ ans</div></div>
+      </div>
+      <button class="ob-btn" id="btn-s2" onclick="nextStep()" disabled>Continuer →</button>
+    </div>
+    <div class="ob-step" id="s3">
+      <div class="ob-ey">Étape 3 sur 4</div>
+      <div class="ob-title">Où perds-tu le plus ?</div>
+      <div class="ob-sub">Sélectionne tout ce qui te correspond.</div>
+      <div class="ob-checks">
+        <div class="ob-check" data-val="anticipation" onclick="togCheck(this)"><div class="ob-chk-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,4 4,7 9,1"/></svg></div><div class="ob-chk-txt">J'entre trop tôt — j'anticipe les cassures</div></div>
+        <div class="ob-check" data-val="risque" onclick="togCheck(this)"><div class="ob-chk-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,4 4,7 9,1"/></svg></div><div class="ob-chk-txt">Je ne gère pas bien mes stops et mon risque</div></div>
+        <div class="ob-check" data-val="methode" onclick="togCheck(this)"><div class="ob-chk-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,4 4,7 9,1"/></svg></div><div class="ob-chk-txt">Je n'ai pas de méthodologie structurée</div></div>
+        <div class="ob-check" data-val="psychologie" onclick="togCheck(this)"><div class="ob-chk-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,4 4,7 9,1"/></svg></div><div class="ob-chk-txt">Ma psychologie me sabote — peur, revenge trading</div></div>
+        <div class="ob-check" data-val="indicateurs" onclick="togCheck(this)"><div class="ob-chk-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,4 4,7 9,1"/></svg></div><div class="ob-chk-txt">J'utilise des indicateurs qui ne marchent pas</div></div>
+      </div>
+      <button class="ob-btn" onclick="nextStep()">Continuer →</button>
+    </div>
+
+    <!-- S4 : Durée du programme -->
+    <div class="ob-step" id="s4">
+      <div class="ob-ey">Étape 4 sur 4</div>
+      <div class="ob-title">Quelle est la durée de ton accompagnement ?</div>
+      <div class="ob-sub">Le coach adapte son rythme et ses conseils à l'avancement dans ton programme.</div>
+      <div class="ob-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:28px">
+        <div class="ob-card" data-val="3" onclick="selDuration(this)">
+          <div class="ob-card-ico">⚡</div>
+          <div class="ob-card-t">3 mois</div>
+          <div class="ob-card-s">Intensif</div>
+        </div>
+        <div class="ob-card" data-val="6" onclick="selDuration(this)">
+          <div class="ob-card-ico">🎯</div>
+          <div class="ob-card-t">6 mois</div>
+          <div class="ob-card-s">Équilibré</div>
+        </div>
+        <div class="ob-card" data-val="12" onclick="selDuration(this)">
+          <div class="ob-card-ico">🏛</div>
+          <div class="ob-card-t">1 an</div>
+          <div class="ob-card-s">Complet</div>
+        </div>
+      </div>
+      <div id="duration-info" style="display:none;background:var(--blue-t);border:1px solid var(--blue-t2);border-radius:10px;padding:13px 16px;margin-bottom:24px;font-size:13px;color:var(--t2);line-height:1.6">
+        <span id="duration-info-text"></span>
+      </div>
+      <button class="ob-btn" id="btn-s4" onclick="finishOnboarding()" disabled>Démarrer mon programme →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ACCESS GATE ════ -->
+<div class="gate-overlay hidden" id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">
+      <div class="gate-logo-ico"><svg viewBox="0 0 18 18"><polyline points="1,14 6,8 10,10 17,3"/><circle cx="17" cy="3" r="1.5" fill="#fff" stroke="none"/></svg></div>
+      <div><div class="gate-logo-name">Trading Coach WTS</div><div class="gate-logo-sub">by Erwan Signé</div></div>
+    </div>
+    <div class="gate-card">
+      <div class="gate-lock-ico"><svg viewBox="0 0 22 22"><rect x="4" y="10" width="14" height="11" rx="2.5"/><path d="M7.5 10V7a3.5 3.5 0 017 0v3"/><circle cx="11" cy="15.5" r="1.8" fill="var(--blue-br)" stroke="none"/></svg></div>
+      <div class="gate-title">Code d'accès requis</div>
+      <div class="gate-desc">Ce coach est réservé aux membres WTS.<br>Entre ton code d'accès personnel pour continuer.</div>
+      <input class="gate-inp" id="gate-inp" type="text" placeholder="Ex: WTS-DAVID-2024" maxlength="32" autocomplete="off" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9\-]/g,'');clearGateErr()" onkeydown="if(event.key==='Enter')submitGate()">
+      <div class="gate-err" id="gate-err"></div>
+      <button class="gate-submit" onclick="submitGate()">Accéder au coach →</button>
+      <div class="gate-hint">Code envoyé par email à l'achat.<br>Pas encore membre ? <a href="#" onclick="return false">Rejoindre WTS →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ APP ════ -->
+<div id="app" class="screen hidden" style="display:none">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="sb">
+    <div class="sb-top">
+      <div class="sb-brand">
+        <div class="sb-bico"><svg viewBox="0 0 14 14"><polyline points="1,11 5,6 8,8 13,2"/><circle cx="13" cy="2" r="1.2" fill="#fff" stroke="none"/></svg></div>
+        <div><div class="sb-bname">Trading Coach</div><div style="font-size:9px;color:var(--t3)">by WTS</div></div>
+      </div>
+      <button class="upload-btn" onclick="document.getElementById('img-upload').click()">
+        <svg viewBox="0 0 14 14"><rect x="1" y="2" width="12" height="10" rx="1.5"/><polyline points="1,6.5 5,3.5 7,5.5 9.5,2.5 13,5"/></svg>
+        Analyser un chart
+      </button>
+      <div class="upload-hint">Déclenche la grille d'analyse WTS automatiquement</div>
+      <input type="file" id="img-upload" accept="image/*" multiple style="display:none" onchange="handleImgUpload(event)">
+    </div>
+    <div class="sb-lbl">Mes charts</div>
+    <div class="img-list" id="img-list">
+      <div id="img-empty" style="padding:24px 12px;text-align:center;color:var(--t3)">
+        <svg style="width:32px;height:32px;stroke:var(--t3);fill:none;stroke-width:1.5;stroke-linecap:round;margin:0 auto 8px;display:block" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="3,15 7,11 11,13 15,8 21,13"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+        <div style="font-size:12px;color:var(--t2);margin-bottom:4px">Aucun chart</div>
+        <div style="font-size:11px;line-height:1.4">Upload pour activer la grille WTS automatiquement</div>
+      </div>
+    </div>
+    <div class="sb-ft">
+      <div class="uava-row">
+        <div class="uava" id="uava">?</div>
+        <div><div class="uname" id="uname-d">Trader</div><div class="uplan">WTS · Trading Coach</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="chat">
+    <div class="chat-top">
+      <div class="ct-logo">
+        <div class="ct-logo-ico"><svg viewBox="0 0 12 12"><polyline points="1,9 4,5.5 7,7 11,2"/></svg></div>
+        <span class="ct-logo-name">Trading Coach WTS</span>
+      </div>
+      <div class="ct-status"><div class="ct-sdot"></div><span id="status-txt">Coach actif</span></div>
+      <div class="kb-pill" id="kb-pill" style="display:none"><div class="kb-dot"></div><span id="kb-count">0 sources</span></div>
+
+      <!-- Active template badge -->
+      <div class="tpl-active-pill" id="tpl-active-pill">
+        <div class="tpl-pill-dot" id="tpl-pill-dot"></div>
+        <span class="tpl-pill-name" id="tpl-pill-name"></span>
+        <span class="tpl-pill-x" onclick="clearActiveTpl()">✕</span>
+      </div>
+
+      <!-- Template selector -->
+      <div class="tpl-sel-wrap" id="tpl-sel-wrap">
+        <button class="tpl-sel-btn" onclick="toggleTplDd(event)">
+          <svg viewBox="0 0 14 14"><rect x="1" y="2" width="12" height="10" rx="1.5"/><line x1="4" y1="5.5" x2="10" y2="5.5"/><line x1="4" y1="8.5" x2="7" y2="8.5"/></svg>
+          Templates
+        </button>
+        <div class="tpl-dropdown" id="tpl-dd">
+          <div class="tpl-dd-head">Activer un template</div>
+          <div id="tpl-dd-body"><div class="tpl-dd-none">Aucun template configuré dans l'admin</div></div>
+          <div class="tpl-dd-clear" onclick="clearActiveTpl();closeTplDd()">Désactiver le template actif</div>
+        </div>
+      </div>
+
+      <div style="padding:3px 9px;border-radius:6px;background:var(--elev);border:1px solid var(--b2);font-size:11px;color:var(--t2);font-family:var(--fm)">Mode éducatif</div>
+      <button class="topbar-btn" onclick="openApiModal()">⚙ API</button>
+    </div>
+
+    <div class="msgs" id="msgs"><div class="msgs-inner" id="msgs-inner"></div></div>
+
+    <div class="inpzone">
+      <div class="img-queued" id="img-queued">
+        <img class="img-queued-thumb" id="iq-thumb" src="" alt="">
+        <span class="img-queued-name" id="iq-name">chart.png</span>
+        <button class="rm-q" onclick="cancelQueued()">✕</button>
+      </div>
+      <div class="ibox">
+        <textarea class="ti" id="inp" placeholder="Pose une question, décris ta situation, ou envoie ton analyse..." onkeydown="hk(event)" oninput="ar(this)" rows="1"></textarea>
+        <div class="ibtns">
+          <button class="icb" onclick="document.getElementById('img-upload').click()" title="Ajouter un chart">
+            <svg viewBox="0 0 15 15"><rect x="1.5" y="2" width="12" height="11" rx="1.5"/><polyline points="1.5,9.5 5,6.5 8,8 11,5 13.5,7"/><circle cx="5" cy="5" r="1.2"/></svg>
+          </button>
+          <button class="sndbtn" id="sndbtn" onclick="sendMsg()">
+            <svg viewBox="0 0 13 13"><line x1="6.5" y1="11.5" x2="6.5" y2="1.5"/><polyline points="2,5.5 6.5,1.5 11,5.5"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="ihint">Usage pédagogique · Pas de signaux · Pas de prédictions financières · © WTS Trading</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="rp">
+    <div class="rp-h"><span class="rp-title">Contexte & coaching</span><span style="font-size:10px;color:var(--t3)" id="sess-num">Session #1</span></div>
+    <div class="rp-scroll">
+      <div class="rp-sec">
+        <div class="rp-lbl">Marché</div>
+        <div class="mktcard">
+          <div class="mkt-name">NQ · Nasdaq Futures <span class="mkt-badge">EU/US</span></div>
+          <div class="mkt-row"><span class="mkt-k">VAH</span><span class="mkt-v">—</span></div>
+          <div class="mkt-row"><span class="mkt-k">POC</span><span class="mkt-v">—</span></div>
+          <div class="mkt-row"><span class="mkt-k">VAL</span><span class="mkt-v">—</span></div>
+          <div class="mkt-row"><span class="mkt-k">Session</span><span class="mkt-v" id="sess-time">—</span></div>
+          <div class="mkt-btns">
+            <button class="mkt-btn" onclick="quickAsk('Analyse le contexte du NQ et guide-moi sur ce que je dois surveiller.')">Analyser</button>
+            <button class="mkt-btn" onclick="quickAsk('Teste ma lecture du marché : pose-moi 3 questions sur le contexte NQ actuel.')">Me tester</button>
+          </div>
+        </div>
+      </div>
+      <div class="rp-sec">
+        <div class="rp-lbl">Concepts</div>
+        <div class="tags">
+          <div class="ctag2" onclick="quickAsk('Explique-moi la VAH et la VAL avec un exemple pratique sur le NQ.')">VAH/VAL</div>
+          <div class="ctag2" onclick="quickAsk('Comment identifier un breakout valide selon la méthode WTS ?')">Breakout</div>
+          <div class="ctag2" onclick="quickAsk('Explique l\'Order Flow et pourquoi c\'est supérieur aux indicateurs classiques.')">Order Flow</div>
+          <div class="ctag2" onclick="quickAsk('Comment lire le delta pour valider une entrée ?')">Delta</div>
+          <div class="ctag2" onclick="quickAsk('Explique le Market Profile : TPO, Value Area, POC.')">Mkt Profile</div>
+          <div class="ctag2" onclick="quickAsk('Explique le VWAP et son usage institutionnel.')">VWAP</div>
+        </div>
+      </div>
+      <div class="rp-sec">
+        <div class="rp-lbl">Progression</div>
+        <div class="skill"><div class="sk-h"><span class="sk-n">Lecture contexte</span><span class="sk-p" id="p-ctx">—</span></div><div class="sk-bar"><div class="sk-f" id="f-ctx" style="width:0%;background:#2563c4"></div></div></div>
+        <div class="skill"><div class="sk-h"><span class="sk-n">Timing d'entrée</span><span class="sk-p" id="p-tim">—</span></div><div class="sk-bar"><div class="sk-f" id="f-tim" style="width:0%;background:#e85438"></div></div></div>
+        <div class="skill"><div class="sk-h"><span class="sk-n">Gestion du risque</span><span class="sk-p" id="p-rsk">—</span></div><div class="sk-bar"><div class="sk-f" id="f-rsk" style="width:0%;background:#f5b81c"></div></div></div>
+        <div class="skill"><div class="sk-h"><span class="sk-n">Order Flow</span><span class="sk-p" id="p-of">—</span></div><div class="sk-bar"><div class="sk-f" id="f-of" style="width:0%;background:#2563c4"></div></div></div>
+        <div class="sk-note" id="sk-note" style="display:none"></div>
+      </div>
+      <div class="rp-sec">
+        <div class="rp-lbl">Questions rapides</div>
+        <button class="qq" onclick="quickAsk('Explique-moi exactement ce qu\'est la VAH et comment l\'utiliser.')"><span class="qq-arr">›</span>C'est quoi la VAH ?</button>
+        <button class="qq" onclick="quickAsk('Donne-moi une routine de préparation complète avant ma session.')"><span class="qq-arr">›</span>Préparer ma session</button>
+        <button class="qq" onclick="quickAsk('Anatomie d\'un breakout institutionnel valide sur le NQ — les 3 éléments.')"><span class="qq-arr">›</span>Breakout valide</button>
+        <button class="qq" onclick="quickAsk('Je viens de couper une perte — coach-moi sur le débriefing post-trade.')"><span class="qq-arr">›</span>Débriefing post-trade</button>
+      </div>
+      <div class="rp-sec">
+        <div class="rp-lbl">Analyse guidée</div>
+        <button class="gs-btn" onclick="startGuided()"><svg viewBox="0 0 15 15"><circle cx="7.5" cy="7.5" r="6.5"/><polyline points="5,7.5 7.5,10 10.5,5"/></svg><div>Démarrer l'analyse guidée<div class="gs-sub">Le coach t'interroge étape par étape</div></div></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ADMIN OVERLAY ════ -->
+<div class="admin-overlay" id="admin-overlay">
+  <div class="admin-login" id="admin-login">
+    <div class="admin-login-logo">
+      <div class="admin-login-ico"><svg viewBox="0 0 14 14"><rect x="3" y="6" width="8" height="7" rx="1.5"/><path d="M5 6V4a2 2 0 014 0v2"/><circle cx="7" cy="9.5" r="1" fill="#ff7c5c" stroke="none"/></svg></div>
+      <div><div class="admin-login-t">Espace propriétaire</div><div class="admin-login-s">Erwan Signé · WTS</div></div>
+    </div>
+    <div class="admin-title">Panneau d'administration</div>
+    <div class="admin-sub">Gère les codes d'accès, la base de connaissances et les templates de coaching.</div>
+    <input class="admin-inp" id="admin-pw" type="password" placeholder="Mot de passe admin..." onkeydown="if(event.key==='Enter')checkAdminPw()">
+    <div class="admin-err" id="admin-err">Mot de passe incorrect.</div>
+    <button class="admin-btn" onclick="checkAdminPw()">Accéder →</button>
+    <button class="admin-cancel" onclick="closeAdmin()">Annuler</button>
+  </div>
+
+  <div class="admin-panel" id="admin-panel">
+    <div class="admin-pbar">
+      <div class="admin-pbar-ico"><svg viewBox="0 0 14 14"><rect x="3" y="6" width="8" height="7" rx="1.5"/><path d="M5 6V4a2 2 0 014 0v2"/></svg></div>
+      <div><div class="admin-pbar-t">Administration WTS</div><div class="admin-pbar-s">Erwan Signé · Espace propriétaire</div></div>
+      <button class="admin-close" onclick="closeAdmin()"><svg viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="a-tab on" id="tab-codes-btn" onclick="switchTab('codes')">🔑 Codes d'accès</button>
+      <button class="a-tab" id="tab-kb-btn" onclick="switchTab('kb')">📚 Base de connaissances</button>
+      <button class="a-tab" id="tab-tpl-btn" onclick="switchTab('tpl')">📋 Templates de coaching</button>
+    </div>
+
+    <!-- ── TAB CODES ── -->
+    <div class="codes-pane open" id="tab-codes">
+      <div class="cs-stats">
+        <div class="cs-box"><div class="cs-val" id="cs-total">0</div><div class="cs-lbl">Total</div></div>
+        <div class="cs-box"><div class="cs-val" id="cs-active">0</div><div class="cs-lbl">Actifs</div></div>
+        <div class="cs-box"><div class="cs-val" id="cs-used">0</div><div class="cs-lbl">Utilisés</div></div>
+      </div>
+      <div class="codes-how"><b>Comment ça fonctionne :</b> Chaque étudiant reçoit son code unique à l'achat. Il le saisit après l'onboarding — mémorisé dans son navigateur. Tu peux <b>désactiver</b> un code à tout moment (blocage immédiat) sans le supprimer. <b>Si aucun code n'existe</b>, l'accès est libre (mode test).</div>
+      <div class="codes-add-block">
+        <div class="sec-lbl">Créer un code</div>
+        <div class="code-inp-row">
+          <input class="cinp" id="new-name" type="text" placeholder="Prénom Nom de l'étudiant">
+          <input class="cinp mono" id="new-code" type="text" placeholder="CODE-ACCES" maxlength="28" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9\-]/g,'')">
+        </div>
+        <div class="code-add-actions">
+          <button class="gen-btn" onclick="generateCode()">⚡ Générer auto</button>
+          <button class="create-btn" onclick="addCode()">Créer →</button>
+        </div>
+      </div>
+      <div class="sec-lbl">Codes existants</div>
+      <div class="code-list" id="code-list">
+        <div class="no-codes" id="no-codes">Aucun code créé.<br><span style="font-size:11px">Tant qu'aucun code n'existe, l'accès est ouvert.</span></div>
+      </div>
+    </div>
+
+    <!-- ── TAB KB ── -->
+    <div class="admin-body" id="tab-kb">
+      <div class="admin-left">
+        <div class="admin-left-top">
+          <h3>Sources de la méthode WTS</h3>
+          <button class="addbtn" onclick="newSource()"><svg viewBox="0 0 11 11"><line x1="5.5" y1="1" x2="5.5" y2="10"/><line x1="1" y1="5.5" x2="10" y2="5.5"/></svg>Nouvelle source</button>
+        </div>
+        <div class="src-list" id="src-list"></div>
+        <div class="admin-left-stats">
+          <div class="stat-row">
+            <div class="stat-box"><div class="stat-val" id="st-total">0</div><div class="stat-lbl">Sources</div></div>
+            <div class="stat-box"><div class="stat-val" id="st-active">0</div><div class="stat-lbl">Actives</div></div>
+            <div class="stat-box"><div class="stat-val" id="st-words">0</div><div class="stat-lbl">Mots</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="admin-right">
+        <div class="admin-empty" id="admin-empty">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg>
+          <p>Sélectionne une source ou crée-en une nouvelle.<br>Le coach s'en nourrit pour répondre avec ta méthode exacte.</p>
+        </div>
+        <div class="admin-editor" id="admin-editor">
+          <div class="editor-top">
+            <input class="editor-title-inp" id="ed-title" type="text" placeholder="Titre de la source...">
+            <select class="editor-type-sel" id="ed-type">
+              <option value="transcription">Transcription vidéo</option>
+              <option value="regle">Règle / principe</option>
+              <option value="exemple">Exemple de trade</option>
+              <option value="note">Note de coaching</option>
+              <option value="glossaire">Glossaire WTS</option>
+              <option value="methode">Méthode complète</option>
+            </select>
+            <button class="editor-del" onclick="deleteCurrentSrc()">Supprimer</button>
+          </div>
+          <div class="editor-content">
+            <div class="editor-dropzone" id="ed-drop" onclick="document.getElementById('src-file').click()" ondragover="edDragOver(event)" ondragleave="edDragLeave(event)" ondrop="edDrop(event)">
+              <div class="editor-dropzone-t">Glisse un fichier ou clique pour importer</div>
+              <div class="editor-dropzone-s">.txt · .md · .srt (sous-titres YouTube) · .vtt</div>
+            </div>
+            <input type="file" id="src-file" accept=".txt,.md,.srt,.vtt,.csv" style="display:none" onchange="handleSrcFile(event)">
+            <textarea class="editor-textarea" id="ed-content" placeholder="Colle ta transcription, tes règles, tes notes de coaching...&#10;&#10;Tout ce que tu écris ici sera utilisé par le coach pour répondre avec ta méthode exacte."></textarea>
+          </div>
+          <div class="editor-footer">
+            <span class="editor-footer-meta" id="ed-meta">0 mots · 0 caractères</span>
+            <button class="editor-save" onclick="saveCurrentSrc()">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB TEMPLATES ── -->
+    <div class="tpl-pane" id="tab-tpl">
+      <div class="tpl-layout">
+
+        <!-- List sidebar -->
+        <div class="tpl-left">
+          <div class="tpl-left-top">
+            <h3>Templates de coaching</h3>
+            <div class="tpl-type-tabs">
+              <button class="ttype on" data-type="all" onclick="filterTpl('all',this)">Tous</button>
+              <button class="ttype" data-type="grille" onclick="filterTpl('grille',this)">Grilles</button>
+              <button class="ttype" data-type="strategie" onclick="filterTpl('strategie',this)">Stratégies</button>
+              <button class="ttype" data-type="script" onclick="filterTpl('script',this)">Scripts</button>
+              <button class="ttype" data-type="marche" onclick="filterTpl('marche',this)">Marchés</button>
+            </div>
+          </div>
+          <div class="tpl-list" id="tpl-list"></div>
+          <button class="tpl-add-btn" onclick="newTpl()">
+            <svg viewBox="0 0 11 11"><line x1="5.5" y1="1" x2="5.5" y2="10"/><line x1="1" y1="5.5" x2="10" y2="5.5"/></svg>
+            Nouveau template
+          </button>
+        </div>
+
+        <!-- Editor -->
+        <div class="tpl-right">
+          <div class="tpl-empty" id="tpl-empty">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="13" y2="13"/></svg>
+            <div class="tpl-empty-desc">Sélectionne un template ou crée-en un nouveau.</div>
+            <div class="tpl-legend">
+              <div class="tpl-legend-row"><div class="tpl-legend-dot dot-grille"></div><div><b style="color:var(--t1)">Grille d'analyse</b> — Appliquée automatiquement quand l'utilisateur uploade un chart. Checklist WTS étape par étape.</div></div>
+              <div class="tpl-legend-row"><div class="tpl-legend-dot dot-strategie"></div><div><b style="color:var(--t1)">Stratégie complète</b> — Setup, conditions d'entrée, stop, objectifs, invalidations. Le coach valide les trades de l'utilisateur.</div></div>
+              <div class="tpl-legend-row"><div class="tpl-legend-dot dot-script"></div><div><b style="color:var(--t1)">Script de coaching</b> — Séquence de questions guidées (débriefing, préparation, post-trade). Le coach suit le script.</div></div>
+              <div class="tpl-legend-row"><div class="tpl-legend-dot dot-marche"></div><div><b style="color:var(--t1)">Fiche marché</b> — Caractéristiques, heures liquides, comportements Order Flow spécifiques par instrument.</div></div>
+            </div>
+          </div>
+
+          <div class="tpl-editor" id="tpl-editor">
+            <div class="tpl-editor-top">
+              <input class="tpl-title-inp" id="tpl-title" type="text" placeholder="Nom du template...">
+              <select class="tpl-type-sel" id="tpl-type" onchange="switchTplForm()">
+                <option value="grille">Grille d'analyse</option>
+                <option value="strategie">Stratégie complète</option>
+                <option value="script">Script de coaching</option>
+                <option value="marche">Fiche marché</option>
+              </select>
+              <div class="tpl-auto-row" title="Appliquer automatiquement lors d'un chart upload">
+                <button class="auto-sw" id="auto-sw" onclick="toggleAutoSw()"></button>
+                <span>Auto chart</span>
+              </div>
+              <button class="tpl-del-btn" onclick="deleteTpl()">Supprimer</button>
+            </div>
+
+            <!-- GRILLE form -->
+            <div class="tpl-fields" id="tf-grille" style="display:none">
+              <div class="tpl-form">
+                <div class="tpl-form-info">Le coach applique ces étapes dans l'ordre lors de l'analyse du chart. Chaque champ = une étape de la checklist.</div>
+                <div class="tpl-field"><div class="tpl-field-lbl">1. Lecture du contexte général</div><textarea class="tpl-field-inp" id="gf1" rows="2" placeholder="Ex: Identifier la session (EU/US), la phase de marché (tendance/range/distribution), et situer le prix par rapport à la VAH, VAL et POC de la session précédente."></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">2. Identification du niveau clé</div><textarea class="tpl-field-inp" id="gf2" rows="2" placeholder="Ex: Quel est le niveau le plus important visible sur le chart ? (VAH, VAL, POC, niveau de structure, VWAP). Pourquoi est-ce un niveau institutionnel ?"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">3. Analyse Order Flow</div><textarea class="tpl-field-inp" id="gf3" rows="2" placeholder="Ex: Décrire le delta et le volume sur les bougies clés autour du niveau. Y a-t-il absorption, déséquilibre, ou signature institutionnelle visible ?"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">4. Évaluation du setup</div><textarea class="tpl-field-inp" id="gf4" rows="2" placeholder="Ex: Les 3 conditions WTS sont-elles réunies : niveau + delta + volume ? Le setup est-il valide ou l'utilisateur a-t-il anticipé ? Y avait-il confirmation ?"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">5. Question coaching principale</div><textarea class="tpl-field-inp" id="gf5" rows="2" placeholder="Ex: Qu'est-ce qui t'a fait agir (ou ne pas agir) à ce moment précis — une règle définie ou une émotion ?"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Règle WTS à rappeler</div><textarea class="tpl-field-inp" id="gf6" rows="2" placeholder="Ex: Pas de cassure sans confirmation. Si le niveau n'était pas marqué la veille, l'analyse est réactive — pas professionnelle."></textarea></div>
+              </div>
+            </div>
+
+            <!-- STRATEGIE form -->
+            <div class="tpl-fields" id="tf-strategie" style="display:none">
+              <div class="tpl-form">
+                <div class="tpl-form-info">Décris le setup complet. Le coach s'en sert pour valider les trades et corriger l'exécution de l'utilisateur avec ta méthode exacte.</div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Nom du setup</div><input class="tpl-field-inp" id="sf0" type="text" placeholder="Ex: Breakout VAH institutionnel NQ · Session EU"></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Marchés concernés</div><input class="tpl-field-inp" id="sf1" type="text" placeholder="Ex: NQ (Nasdaq E-mini) · SP500 · BUND"></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Conditions du setup (liste numérotée)</div><textarea class="tpl-field-inp" id="sf2" rows="5" placeholder="1. Prix consolide sous la VAH pendant 3+ bougies minimum&#10;2. Delta cumulatif positif et croissant pendant la consolidation&#10;3. Bougie de cassure avec volume supérieur à la moyenne des 20 dernières bougies&#10;4. Aucune résistance majeure dans les 15 points au-dessus&#10;5. Cassure en heures liquides (09h30–11h30 ET ou 14h–16h ET)"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Signal d'entrée précis</div><textarea class="tpl-field-inp" id="sf3" rows="2" placeholder="Ex: Close de bougie au-dessus de la VAH avec delta positif sur cette bougie. Entrée au marché à la bougie suivante OU ordre stop 1 tick au-dessus du high de la bougie de cassure."></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Placement du stop loss</div><textarea class="tpl-field-inp" id="sf4" rows="2" placeholder="Ex: Sous le POC de la zone de consolidation. Ou sous la VAH si retest immédiat. Risque maximum : 10 points sur NQ, 5 points sur SP500."></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Objectifs de prix</div><textarea class="tpl-field-inp" id="sf5" rows="2" placeholder="Ex: T1 = rapport 1:1 (prise de 50% de la position). T2 = prochain niveau de structure ou VAH de la session suivante. Laisser courir si delta reste positif."></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Conditions d'invalidation (ne pas prendre si...)</div><textarea class="tpl-field-inp" id="sf6" rows="3" placeholder="• Delta négatif sur la bougie de cassure (absorption des vendeurs)&#10;• Volume inférieur à la moyenne sur la cassure&#10;• Cassure en dehors des heures liquides&#10;• Actualité macro imminente dans les 30 minutes&#10;• 3ème tentative de cassure ou plus (énergie épuisée)"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Erreurs fréquentes à corriger chez l'utilisateur</div><textarea class="tpl-field-inp" id="sf7" rows="2" placeholder="Ex: Entrer avant la cassure (anticipation). Stop trop serré directement sous la VAH. Ne pas vérifier le delta. Entrer sur la 3ème cassure."></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Schéma / description visuelle</div><textarea class="tpl-field-inp" id="sf8" rows="4" placeholder="Décris schématiquement le setup pour que le coach puisse l'expliquer à l'utilisateur :&#10;&#10;[RÉSISTANCE: VAH] ← cassure ici&#10;[ZONE D'ACCUMULATION: 3-5 bougies] ← delta monte&#10;[SUPPORT: POC ou structure] ← stop ici&#10;&#10;Forme attendue : consolidation horizontale avec delta ascendant, puis bougie large avec volume."></textarea></div>
+              </div>
+            </div>
+
+            <!-- SCRIPT form -->
+            <div class="tpl-fields" id="tf-script" style="display:none">
+              <div class="tpl-form">
+                <div class="tpl-form-info">Séquence de questions que le coach pose dans l'ordre. Le coach suit ce script pour guider l'utilisateur — débriefing, préparation, analyse guidée.</div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Contexte d'utilisation</div><input class="tpl-field-inp" id="scf0" type="text" placeholder="Ex: Débriefing post-trade · Préparation session matinale · Analyse d'une erreur répétée"></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Mots-clés déclencheurs (le coach reconnaît ces situations)</div><input class="tpl-field-inp" id="scf1" type="text" placeholder="Ex: débriefing, j'ai perdu, j'ai raté, résultat de ma session, post-trade..."></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Question 1 — Ouverture (ancrage)</div><textarea class="tpl-field-inp" id="scf2" rows="2" placeholder="Ex: Avant qu'on analyse ensemble — dis-moi ce que tu avais prévu AVANT d'entrer. Quel était ton plan exact ?"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Question 2 — Contexte (préparation)</div><textarea class="tpl-field-inp" id="scf3" rows="2" placeholder="Ex: Est-ce que tu avais marqué ce niveau la veille, ou tu l'as identifié en temps réel pendant la session ?"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Question 3 — Exécution (confrontation)</div><textarea class="tpl-field-inp" id="scf4" rows="2" placeholder="Ex: Ce qui t'a fait entrer (ou hésiter) à CE moment précis — c'était une règle définie à l'avance, ou une émotion ?"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Question 4 — Apprentissage (extraction)</div><textarea class="tpl-field-inp" id="scf5" rows="2" placeholder="Ex: Si tu devais formuler en une seule phrase la règle que ce trade t'a apprise — ce serait quoi ?"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Conclusion coaching (règle + exercice)</div><textarea class="tpl-field-inp" id="scf6" rows="2" placeholder="Ex: Rappeler la règle WTS correspondante et proposer un exercice concret : backtest, replay, ou exercice de préparation pour demain."></textarea></div>
+              </div>
+            </div>
+
+            <!-- MARCHE form -->
+            <div class="tpl-fields" id="tf-marche" style="display:none">
+              <div class="tpl-form">
+                <div class="tpl-form-info">Fiche de référence par instrument. Le coach l'utilise pour contextualiser ses analyses et adapter ses corrections au marché spécifique.</div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Instrument et contrat</div><input class="tpl-field-inp" id="mf0" type="text" placeholder="Ex: NQ — Nasdaq 100 E-mini Futures (CME) — tick: 0,25 pt = 5$"></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Heures liquides recommandées</div><input class="tpl-field-inp" id="mf1" type="text" placeholder="Ex: 09h30–11h30 ET (optimal) · 14h00–16h00 ET · Éviter 11h30–13h30 ET (lunch, spread large)"></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Caractéristiques et amplitude</div><textarea class="tpl-field-inp" id="mf2" rows="3" placeholder="Ex: Très sensible aux données macro US (NFP, CPI, Fed). Amplitude journalière moyenne : 150–250 pts. ATR horaire moyen en session normale : 30–60 pts. Très corrélé au SP500 (bêta > 1)."></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Niveaux de référence récurrents</div><textarea class="tpl-field-inp" id="mf3" rows="3" placeholder="Ex: Niveaux psychologiques ronds (18000, 17500, 17000, 16500)&#10;Quarter points (18250, 18500...)&#10;VAH/VAL/POC de la semaine précédente (WHH, WHL)&#10;VWAP mensuel et trimestriel"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Comportements Order Flow typiques</div><textarea class="tpl-field-inp" id="mf4" rows="4" placeholder="Ex:&#10;• Forte absorption fréquente sur les niveaux overnight en pré-marché&#10;• Les breakouts sans volume > 2000 contrats sur la bougie = souvent faux&#10;• Le delta diverge souvent 2-3 bougies avant un retournement majeur&#10;• Déséquilibres dans le carnet le matin souvent effacés avant midi ET"></textarea></div>
+                <div class="tpl-field"><div class="tpl-field-lbl">Erreurs courantes des débutants sur ce marché</div><textarea class="tpl-field-inp" id="mf5" rows="3" placeholder="Ex:&#10;• Trader les 5 premières minutes de l'ouverture sans attendre la confirmation (09h45 ET minimum)&#10;• Confondre le move overnight/pré-marché avec la direction journalière&#10;• Sous-estimer la volatilité lors des données macro US (stopper les positions 30 min avant)"></textarea></div>
+              </div>
+            </div>
+
+            <div class="tpl-editor-footer">
+              <span class="tpl-footer-meta" id="tpl-footer-meta">Nouveau template</span>
+              <button class="tpl-save-btn" onclick="saveTpl()">Enregistrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- API Modal -->
+<div class="modal-bg" id="api-modal">
+  <div class="modal">
+    <div class="modal-t">Clé API Claude</div>
+    <div class="modal-s">Clé Anthropic pour activer le vrai coach AI.<br><a href="https://console.anthropic.com" target="_blank" style="color:var(--blue-br)">console.anthropic.com</a> → API Keys</div>
+    <input class="modal-inp" id="api-key-inp" type="password" placeholder="sk-ant-api03-...">
+    <div class="modal-row">
+      <button class="mbtn-g" onclick="closeApiModal()">Annuler</button>
+      <button class="mbtn" onclick="saveApiKey()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════
+// CONFIGURATION
+// ══════════════════════════════════
+var ADMIN_PW = '//Julius711//'; // ← Changer avant déploiement !
+var API_KEY_BUILTIN = ''; // ← Optionnel : intègre ta clé ici pour tous les utilisateurs
+
+// ══════════════════════════════════
+// STATE
+// ══════════════════════════════════
+var S = {
+  name:'', level:'', problems:[],
+  apiKey: localStorage.getItem('wts_key') || API_KEY_BUILTIN,
+  demo:false, step:0, sessN:0, msgN:0,
+  skills:{ctx:0,tim:0,rsk:0,of:0},
+  kb:        JSON.parse(localStorage.getItem('wts_kb')        || '[]'),
+  codes:     JSON.parse(localStorage.getItem('wts_codes')     || '[]'),
+  templates: JSON.parse(localStorage.getItem('wts_templates') || '[]'),
+  activeTplId: null,
+  curSrcId:    null,
+  curTplId:    null,
+  tplFilter:   'all',
+  images:[], queuedImg:null,
+  // Programme tracking
+  programmeDuration: 0,      // months: 3, 6, or 12
+  programmeStart: null,      // ISO date string — saved in localStorage
+  programmeEnd: null,        // ISO date string
+  lastVisit: null,           // ISO date string — for daily check-in
+  sessionCount: 0,           // lifetime session count
+  sessionFirstMsg: true      // flag: has the user sent their first msg this session?
+};
+
+// ── Restore persisted programme data ──
+(function(){
+  var pd=localStorage.getItem('wts_programme');
+  if(pd){try{var o=JSON.parse(pd);S.programmeDuration=o.duration||0;S.programmeStart=o.start||null;S.programmeEnd=o.end||null;S.lastVisit=o.lastVisit||null;S.sessionCount=o.sessionCount||0;}catch(e){}}
+})();
+
+// TPL colors
+var TPL_COLORS = {grille:'#4a89e8',strategie:'#4ade80',script:'#f5b81c',marche:'#ff7c5c'};
+var TPL_BG     = {grille:'rgba(74,137,232,.12)',strategie:'rgba(74,222,128,.1)',script:'rgba(245,184,28,.1)',marche:'rgba(255,124,92,.1)'};
+
+// ══════════════════════════════════
+// ONBOARDING
+// ══════════════════════════════════
+function updProg(){for(var i=0;i<5;i++){var d=document.getElementById('p'+i);if(d)d.className='ob-dot'+(i<=S.step?' done':'');}}
+function showStep(n){document.querySelectorAll('.ob-step').forEach(function(e){e.classList.remove('active');});var el=document.getElementById('s'+n);if(el)el.classList.add('active');S.step=n;updProg();}
+function nextStep(){if(S.step===1){S.name=document.getElementById('ob-name').value.trim()||'Trader';}if(S.step<4)showStep(S.step+1);}
+function selCard(el){el.closest('.ob-grid').querySelectorAll('.ob-card').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');S.level=el.dataset.val;document.getElementById('btn-s2').disabled=false;}
+function togCheck(el){el.classList.toggle('sel');var v=el.dataset.val,idx=S.problems.indexOf(v);if(idx>-1)S.problems.splice(idx,1);else S.problems.push(v);}
+
+function selDuration(el){
+  el.closest('.ob-grid').querySelectorAll('.ob-card').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  var months=parseInt(el.dataset.val);
+  S.programmeDuration=months;
+  var info=document.getElementById('duration-info');
+  var txt=document.getElementById('duration-info-text');
+  var start=new Date();
+  var end=new Date(start);end.setMonth(end.getMonth()+months);
+  var labels={'3':'Programme intensif de 3 mois','6':'Programme équilibré de 6 mois','12':'Programme complet d\'1 an'};
+  txt.innerHTML='<b>'+labels[months]+'</b> — début aujourd\'hui, fin le <b>'+fmtDate(end)+'</b>.<br>Le coach adaptera son rythme et ses attentes selon l\'avancement dans ton programme.';
+  info.style.display='block';
+  document.getElementById('btn-s4').disabled=false;
+}
+
+function finishOnboarding(){
+  // Save programme data
+  if(S.programmeDuration>0){
+    var start=new Date();
+    var end=new Date(start);end.setMonth(end.getMonth()+S.programmeDuration);
+    S.programmeStart=start.toISOString();
+    S.programmeEnd=end.toISOString();
+    saveProgramme();
+  }
+  document.getElementById('ob').classList.add('hidden');
+  if(S.codes.length>0){
+    var stored=localStorage.getItem('wts_access')||'';
+    if(stored&&isCodeValid(stored)){launchApp();}else{showGate();}
+  }else{launchApp();}
+}
+
+function saveProgramme(){
+  localStorage.setItem('wts_programme',JSON.stringify({
+    duration:S.programmeDuration,start:S.programmeStart,
+    end:S.programmeEnd,lastVisit:S.lastVisit,sessionCount:S.sessionCount
+  }));
+}
+
+// ══════════════════════════════════
+// ACCESS GATE
+// ══════════════════════════════════
+function showGate(){document.getElementById('gate').classList.remove('hidden');}
+function isCodeValid(code){if(!code)return false;var c=code.trim().toUpperCase();return S.codes.some(function(e){return e.code===c&&e.active;});}
+function submitGate(){
+  var val=document.getElementById('gate-inp').value.trim().toUpperCase();
+  if(!val){shakeGate();return;}
+  if(isCodeValid(val)){
+    localStorage.setItem('wts_access',val);
+    var e=S.codes.find(function(c){return c.code===val;});
+    if(e){if(!e.firstUsed)e.firstUsed=new Date().toISOString();e.usedCount=(e.usedCount||0)+1;saveCodes();}
+    document.getElementById('gate').classList.add('hidden');launchApp();
+  }else{shakeGate();document.getElementById('gate-err').textContent='Code invalide ou désactivé. Vérifie ton code ou contacte WTS.';}
+}
+function shakeGate(){var i=document.getElementById('gate-inp');i.classList.add('shake');setTimeout(function(){i.classList.remove('shake');},400);}
+function clearGateErr(){document.getElementById('gate-err').textContent='';}
+
+// ══════════════════════════════════
+// PROGRAMME HELPERS
+// ══════════════════════════════════
+function getProgrammeProgress(){
+  if(!S.programmeStart||!S.programmeEnd||!S.programmeDuration)return null;
+  var now=new Date();
+  var start=new Date(S.programmeStart);
+  var end=new Date(S.programmeEnd);
+  var totalDays=(end-start)/(1000*60*60*24);
+  var elapsed=(now-start)/(1000*60*60*24);
+  var pct=Math.min(100,Math.max(0,Math.round(elapsed/totalDays*100)));
+  var daysLeft=Math.max(0,Math.ceil((end-now)/(1000*60*60*24)));
+  var weekNum=Math.min(Math.ceil(S.programmeDuration*4.33),Math.max(1,Math.ceil(elapsed/7)));
+  var totalWeeks=Math.round(S.programmeDuration*4.33);
+  return{pct:pct,daysLeft:daysLeft,weekNum:weekNum,totalWeeks:totalWeeks,elapsed:Math.round(elapsed),totalDays:Math.round(totalDays),end:end};
+}
+
+function isNewDay(){
+  if(!S.lastVisit)return true;
+  var last=new Date(S.lastVisit);
+  var now=new Date();
+  return last.toDateString()!==now.toDateString();
+}
+
+function markVisit(){
+  S.lastVisit=new Date().toISOString();
+  S.sessionCount++;
+  saveProgramme();
+}
+
+function fmtDate(d){var months=['jan','fév','mar','avr','mai','juin','jul','août','sep','oct','nov','déc'];return d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();}
+
+// ══════════════════════════════════
+// APP LAUNCH
+// ══════════════════════════════════
+function launchApp(){
+  S.demo=!S.apiKey;
+  var app=document.getElementById('app');app.style.display='flex';setTimeout(function(){app.classList.remove('hidden');},30);
+  var n=S.name||'Trader';
+  document.getElementById('uava').textContent=n.charAt(0).toUpperCase();
+  document.getElementById('uname-d').textContent=n;
+  var h=new Date().getHours();
+  document.getElementById('sess-time').textContent=h<10?'Pré-marché':h<15?'Session EU':h<22?'Session US':'After hours';
+  S.sessN=1;document.getElementById('sess-num').textContent='Session #1';
+  if(S.demo)document.getElementById('status-txt').textContent='Mode démo';
+  updKBPill();renderTplDropdown();
+  var autoGrille=S.templates.find(function(t){return t.type==='grille'&&t.auto;});
+  if(autoGrille){S.activeTplId=autoGrille.id;updTplPill();}
+  // Update right panel with programme info
+  updProgrammePanel();
+  // Mark this visit
+  var newDay=isNewDay();
+  markVisit();
+  S.sessionFirstMsg=true;
+  // Build opening message
+  appendAIBub(buildGreeting(newDay));
+}
+
+function buildGreeting(newDay){
+  var n=S.name&&S.name!=='Trader'?S.name:'';
+  var greet=n?'Bonjour '+n+'.':'Bonjour.';
+  var prog=getProgrammeProgress();
+
+  // ── Case 1: brand new (no programme data yet) ──
+  if(!prog){
+    return greet+'\n\n**Avant de commencer — quel est ton plan pour cette session ?**\n\nDis-moi ce que tu veux analyser, comprendre, ou débriéfer.';
+  }
+
+  // ── Case 2: daily check-in (new day) ──
+  if(newDay){
+    var tip=getDailyTip(prog);
+    var weekLabel='Semaine '+prog.weekNum+'/'+prog.totalWeeks;
+    var endLabel='Fin du programme : '+fmtDate(prog.end);
+    var urgencyNote='';
+    if(prog.daysLeft<=14)urgencyNote='\n\n⚠️ **'+prog.daysLeft+' jours restants** dans ton programme — intensifions le travail.';
+    else if(prog.daysLeft<=30)urgencyNote='\n\n📅 **'+prog.daysLeft+' jours restants** dans ton programme.';
+
+    return greet+'\n\n**Point programme — '+weekLabel+' · '+prog.pct+'% complété**\n'+endLabel+urgencyNote+'\n\n**Conseil du jour :**\n'+tip+'\n\n---\n\n**Quel est ton objectif principal pour cette session ?**';
+  }
+
+  // ── Case 3: returning same day (2nd session) ──
+  return greet+'\n\nDe retour ! **Session #'+S.sessionCount+'** de la journée.\n\nSur quoi veux-tu travailler ?';
+}
+
+function getDailyTip(prog){
+  // Tips that adapt based on programme phase and known problems
+  var phase=prog.pct<25?'debut':prog.pct<50?'milieu_debut':prog.pct<75?'milieu_fin':'fin';
+  var tipsByPhase={
+    debut:[
+      'En début de programme, ta priorité absolue est de **comprendre le contexte avant d\'agir**. Avant chaque session, prends 10 minutes pour identifier ta VAH, VAL et POC — puis ne regarde plus les niveaux pendant la session. Execute ton plan.',
+      'Cette semaine, concentre-toi sur une seule chose : **lire le delta sur chaque bougie** de ta zone de trading. Pas pour trader — juste pour comprendre. Le trade vient après la compréhension.',
+      'Un trader qui débute WTS a une seule mission : **construire son vocabulaire institutionnel**. Quand tu vois une bougie, tu ne dois plus penser "haussière" — tu dois penser "absorption", "déséquilibre", "momentum". Travaille ce reflexe.'
+    ],
+    milieu_debut:[
+      'Tu es à mi-chemin. C\'est le moment où les mauvaises habitudes reviennent. **Vérifie ton respect de tes règles** : est-ce que tes 3 conditions sont toujours réunies avant d\'entrer ? Ou tu commences à "adapter" la règle ?',
+      'À ce stade, ton principal travail est le **débriefing quotidien**. Après chaque session, écris 3 phrases : ce que tu as bien fait, ce que tu aurais dû éviter, la règle à appliquer demain. Partage-les avec moi.',
+      'Mi-programme : il est temps de **quantifier tes progrès**. Compte combien de fois cette semaine tu as attendu les 3 conditions WTS avant d\'entrer. Ce chiffre est ton vrai indicateur — pas ton P&L.'
+    ],
+    milieu_fin:[
+      'Tu approches les 75% du programme. **L\'objectif maintenant : l\'indépendance**. À chaque analyse, essaie d\'abord de voir toi-même avant de me demander. Je corrige — je ne découvre pas à ta place.',
+      'À ce stade, tu dois être capable de **préparer ta session seul** en moins de 15 minutes. Test : demain matin, avant de me contacter, prépare tes niveaux et ton scénario par écrit. Envoie-moi ensuite — on compare.',
+      'Trois quarts du programme terminés. Pose-toi cette question : **qu\'est-ce qui te fait encore hésiter avant d\'entrer ?** Si la réponse est "la peur", c\'est un travail psychologique. Si c\'est "je ne sais pas", c\'est un travail de règles. Les deux ont des solutions différentes.'
+    ],
+    fin:[
+      '**Dernière ligne droite.** L\'objectif de ces dernières semaines : que chaque décision soit **basée sur une règle, pas une émotion**. Avant chaque trade, demande-toi : "est-ce que je peux justifier cette entrée avec 3 critères objectifs ?"',
+      'Fin de programme approche. **Bilan de tes 3 compétences clés :** contexte, timing, Order Flow. Laquelle est encore fragile ? C\'est sur celle-là qu\'on concentre les dernières sessions.',
+      'Tu as presque terminé. La vraie question n\'est pas "est-ce que je sais trader ?" — c\'est **"est-ce que je respecte mon plan quand le marché va vite ?"** C\'est ça qui sépare un trader rentable d\'un bon analyste.'
+    ]
+  };
+  // Override by known problems
+  if(S.problems.includes('anticipation')&&phase==='debut')return 'Tu as identifié l\'anticipation comme ton problème principal. Cette semaine, **interdis-toi d\'entrer tant que tu n\'as pas vu la bougie de confirmation se clore**. Pas d\'exception. Même si tu regrettes d\'avoir "raté" l\'entrée — un trade raté est préférable à un trade anticipé.';
+  if(S.problems.includes('psychologie')&&phase==='milieu_fin')return 'À ce stade de ton programme, la technique ne devrait plus être le frein. Si tu hésites encore, c\'est **la psychologie qui bloque l\'exécution**. Exercice : écris ce que tu penses 30 secondes avant d\'entrer. Cette phrase révèle tout.';
+  var tips=tipsByPhase[phase];
+  return tips[Math.floor(Math.random()*tips.length)];
+}
+
+function updProgrammePanel(){
+  var prog=getProgrammeProgress();
+  if(!prog)return;
+  // Update session time display with programme info
+  var el=document.getElementById('sess-time');
+  if(el)el.textContent='S'+prog.weekNum+'/'+prog.totalWeeks+' · '+prog.daysLeft+'j restants';
+}
+
+// ══════════════════════════════════
+// IMAGE SIDEBAR
+// ══════════════════════════════════
+function handleImgUpload(e){
+  Array.from(e.target.files).forEach(function(f){
+    var r=new FileReader();
+    r.onload=function(ev){
+      var img={id:'i'+Date.now()+Math.random(),name:f.name,dataUrl:ev.target.result,ts:new Date(),analyzed:false};
+      S.images.unshift(img);renderImgList();queueImg(img);
+    };
+    r.readAsDataURL(f);
+  });
+  e.target.value='';
+}
+function renderImgList(){
+  var list=document.getElementById('img-list'),empty=document.getElementById('img-empty');
+  if(!S.images.length){empty.style.display='block';list.querySelectorAll('.img-item').forEach(function(i){i.remove();});return;}
+  empty.style.display='none';list.innerHTML='';
+  S.images.forEach(function(img){
+    var div=document.createElement('div');div.className='img-item'+(S.queuedImg&&S.queuedImg.id===img.id?' active':'');
+    div.innerHTML='<div class="img-thumb"><img src="'+img.dataUrl+'" alt="'+img.name+'"><button class="img-del" onclick="event.stopPropagation();delImg(\''+img.id+'\')"><svg viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button></div>'
+      +'<div class="img-meta"><div class="img-name">'+img.name+'</div><div class="img-time">'+fmtTime(img.ts)+'</div>'
+      +'<div class="img-status '+(img.analyzed?'analyzed':'pending')+'">'+(img.analyzed?'✓ Analysé':'En attente')+'</div></div>';
+    div.onclick=(function(im){return function(){queueImg(im);};})(img);
+    list.appendChild(div);
+  });
+}
+function queueImg(img){
+  S.queuedImg=img;
+  document.getElementById('iq-thumb').src=img.dataUrl;
+  document.getElementById('iq-name').textContent=img.name;
+  document.getElementById('img-queued').className='img-queued show';
+  document.getElementById('inp').placeholder='Que veux-tu analyser sur ce chart ?';
+  // Auto-activate the grille template if not already active
+  if(!S.activeTplId){
+    var g=S.templates.find(function(t){return t.type==='grille'&&t.auto;});
+    if(g){S.activeTplId=g.id;updTplPill();}
+  }
+  renderImgList();document.getElementById('inp').focus();
+}
+function cancelQueued(){S.queuedImg=null;document.getElementById('img-queued').className='img-queued';document.getElementById('inp').placeholder='Pose une question, décris ta situation, ou envoie ton analyse...';renderImgList();}
+function delImg(id){S.images=S.images.filter(function(i){return i.id!==id;});if(S.queuedImg&&S.queuedImg.id===id)cancelQueued();renderImgList();}
+function markAnalyzed(id){var img=S.images.find(function(i){return i.id===id;});if(img)img.analyzed=true;renderImgList();}
+
+// ══════════════════════════════════
+// CHAT UI
+// ══════════════════════════════════
+function aiSvg(){return '<div class="ava ai"><svg viewBox="0 0 16 16" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg></div>';}
+function md(t){return t.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/\*(.*?)\*/g,'<i>$1</i>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');}
+
+function appendAIBub(text,srcName,tplName,tplType){
+  var inner=document.getElementById('msgs-inner');
+  var row=document.createElement('div');row.className='mrow';
+  var refs='';
+  if(srcName)refs+='<div class="src-ref"><svg viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3" y1="4.5" x2="9" y2="4.5"/><line x1="3" y1="7" x2="6.5" y2="7"/></svg>'+srcName+'</div>';
+  if(tplName){var c=TPL_COLORS[tplType]||'#4a89e8';var bg=TPL_BG[tplType]||'rgba(74,137,232,.12)';refs+='<div class="tpl-ref" style="background:'+bg+';border-color:'+c+'40;color:'+c+'"><svg viewBox="0 0 12 12" style="width:10px;height:10px;stroke:'+c+';fill:none;stroke-width:1.8;stroke-linecap:round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3" y1="4.5" x2="9" y2="4.5"/></svg>Template: '+tplName+'</div>';}
+  row.innerHTML=aiSvg()+'<div class="mcol"><div class="bub">'+md(text)+'</div>'+refs+'<div class="qbtns"><button class="qb" onclick="quickAsk(\'Explique ce dernier point plus simplement.\')">Simplifier</button><button class="qb" onclick="quickAsk(\'Donne-moi un exemple concret sur le NQ.\')">Exemple</button><button class="qb" onclick="quickAsk(\'Guide-moi étape par étape sur ce point.\')">Pas à pas</button><button class="qb w" onclick="quickAsk(\'Sois plus exigeant — corrige-moi plus fermement.\')">Corriger fort</button></div></div>';
+  inner.appendChild(row);scrollB();updateSkills();
+}
+function appendUserBub(text,imgData,imgName){
+  var inner=document.getElementById('msgs-inner');
+  var row=document.createElement('div');row.className='mrow u';
+  var imgH=imgData?'<div class="chart-preview"><img src="'+imgData+'" alt="chart"><div class="chart-label"><svg viewBox="0 0 12 12"><rect x=".5" y=".5" width="11" height="11" rx="1.5"/><polyline points=".5,8 3.5,5.5 6,7 8.5,4.5 11.5,6.5"/></svg>'+(imgName||'chart')+'</div></div>':'';
+  row.innerHTML='<div class="ava hu">'+(S.name?S.name.charAt(0).toUpperCase():'D')+'</div><div class="mcol u">'+imgH+'<div class="bub u">'+md(text)+'</div></div>';
+  document.getElementById('msgs-inner').appendChild(row);scrollB();
+}
+function showTyping(){var inner=document.getElementById('msgs-inner');var row=document.createElement('div');row.className='mrow';row.id='ty';row.innerHTML=aiSvg()+'<div class="mcol"><div class="tbub"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>';inner.appendChild(row);scrollB();}
+function hideTyping(){var t=document.getElementById('ty');if(t)t.remove();}
+function scrollB(){var m=document.getElementById('msgs');m.scrollTop=m.scrollHeight;}
+
+// ══════════════════════════════════
+// SEND
+// ══════════════════════════════════
+function sendMsg(){
+  var txt=document.getElementById('inp').value.trim();
+  var img=S.queuedImg;
+  if(!txt&&!img)return;
+
+  // ── PROACTIVE INTERCEPTION — first message of each session ──
+  // If the user jumps straight to an analysis/chart without answering the check-in,
+  // the coach asks a quick context question first, then continues with the request.
+  var isDirectAnalysis=!!img||(txt&&isDirectAnalysisRequest(txt));
+  if(S.sessionFirstMsg&&isDirectAnalysis&&S.programmeDuration>0){
+    S.sessionFirstMsg=false;
+    var prog=getProgrammeProgress();
+    var checkIn=buildCheckInIntercept(txt,!!img,prog);
+    // Show user's message
+    if(img){appendUserBub(txt||'(chart joint)',img.dataUrl,img.name);}
+    else{appendUserBub(txt);}
+    document.getElementById('inp').value='';document.getElementById('inp').style.height='';
+    // Don't send chart yet — store it, show check-in response
+    var pendingTxt=txt;var pendingImg=img?img.dataUrl:null;var pendingImgName=img?img.name:null;var pendingImgId=img?img.id:null;
+    cancelQueued();
+    var btn=document.getElementById('sndbtn');btn.disabled=true;showTyping();
+    setTimeout(function(){
+      hideTyping();appendAIBub(checkIn);btn.disabled=false;
+      // After check-in message, auto-queue the pending request so it resumes naturally
+      // Store pending to send after user responds to check-in
+      S._pendingAfterCheckin={txt:pendingTxt,img:pendingImg,imgName:pendingImgName,imgId:pendingImgId};
+    },700);
+    return;
+  }
+
+  // ── After check-in was shown, resume pending request with next user message ──
+  if(S._pendingAfterCheckin&&!img){
+    // User answered the check-in — now send their answer + pending analysis together
+    var pending=S._pendingAfterCheckin;S._pendingAfterCheckin=null;
+    var combinedTxt=txt+'\n\n[Le trader a donné son contexte hebdomadaire ci-dessus. Maintenant, continue avec sa demande initiale : '+pending.txt+']';
+    appendUserBub(txt);
+    document.getElementById('inp').value='';document.getElementById('inp').style.height='';
+    var btn=document.getElementById('sndbtn');btn.disabled=true;showTyping();
+    if(S.demo||!S.apiKey){setTimeout(function(){hideTyping();var r=getDemoReply(pending.txt,!!pending.img);appendAIBub(r.text,r.src,r.tplName,r.tplType);if(pending.imgId)markAnalyzed(pending.imgId);btn.disabled=false;},900);}
+    else{callClaude(combinedTxt,pending.img,function(t,s,tn,tt){hideTyping();appendAIBub(t,s,tn,tt);if(pending.imgId)markAnalyzed(pending.imgId);btn.disabled=false;},function(e){hideTyping();appendAIBub('⚠️ '+e);btn.disabled=false;});}
+    return;
+  }
+
+  // ── Normal send ──
+  S.sessionFirstMsg=false;
+  if(!txt&&img)txt='Analyse ce chart en tant que coach — applique la grille WTS étape par étape et pose-moi les bonnes questions.';
+  var imgId=img?img.id:null;
+  appendUserBub(txt,img?img.dataUrl:null,img?img.name:null);
+  document.getElementById('inp').value='';document.getElementById('inp').style.height='';
+  cancelQueued();
+  var btn=document.getElementById('sndbtn');btn.disabled=true;showTyping();
+  if(S.demo||!S.apiKey){setTimeout(function(){hideTyping();var r=getDemoReply(txt,!!img);appendAIBub(r.text,r.src,r.tplName,r.tplType);if(imgId)markAnalyzed(imgId);btn.disabled=false;},900);}
+  else{callClaude(txt,img?img.dataUrl:null,function(text,src,tplName,tplType){hideTyping();appendAIBub(text,src,tplName,tplType);if(imgId)markAnalyzed(imgId);btn.disabled=false;},function(err){hideTyping();appendAIBub('⚠️ Erreur API : '+err+'\n\nVérifie ta clé API (bouton ⚙ API).');btn.disabled=false;});}
+}
+
+function isDirectAnalysisRequest(txt){
+  var t=txt.toLowerCase();
+  var keywords=['analyse','analyser','regarde','chart','marché','nq','bund','sp500','breakout','cassure','vah','val','setup','trade','position','entrer','entrée','signal'];
+  return keywords.some(function(k){return t.includes(k);});
+}
+
+function buildCheckInIntercept(txt,hasImg,prog){
+  var n=S.name&&S.name!=='Trader'?S.name:'';
+  var ok=n?'D\'accord '+n+'.':'D\'accord.';
+  var what=hasImg?'on va analyser ce chart ensemble':'on va travailler sur ça';
+  var weekInfo=prog?' *(Semaine '+prog.weekNum+'/'+prog.totalWeeks+' · '+prog.daysLeft+' jours restants)*':'';
+  return ok+' '+what+', mais d\'abord un point rapide.'+weekInfo+'\n\n**Où en es-tu cette semaine ?**\n\n— Quel est ton **objectif principal** pour les 5 prochains jours ?\n— As-tu appliqué le conseil de la dernière session ?\n\nRéponds en 2-3 phrases, et on enchaîne directement sur ton analyse.';
+}
+function quickAsk(txt){S.sessionFirstMsg=false;appendUserBub(txt);var btn=document.getElementById('sndbtn');btn.disabled=true;showTyping();if(S.demo||!S.apiKey){setTimeout(function(){hideTyping();var r=getDemoReply(txt,false);appendAIBub(r.text,r.src,r.tplName,r.tplType);btn.disabled=false;},800);}else{callClaude(txt,null,function(t,s,tn,tt){hideTyping();appendAIBub(t,s,tn,tt);btn.disabled=false;},function(e){hideTyping();appendAIBub('⚠️ '+e);btn.disabled=false;});}}
+// ══════════════════════════════════
+// TEMPLATE CONTEXT BUILDER
+// ══════════════════════════════════
+function getActiveTpl(){
+  if(!S.activeTplId)return null;
+  return S.templates.find(function(t){return t.id===S.activeTplId;})||null;
+}
+
+function buildTplCtx(tpl){
+  if(!tpl)return '';
+  var ctx='\n=== TEMPLATE ACTIF : '+tpl.name.toUpperCase()+' ('+tpl.type.toUpperCase()+') ===\n';
+  ctx+='Applique ce template dans ta réponse. C\'est la structure de coaching définie par Erwan Signé / WTS.\n\n';
+
+  if(tpl.type==='grille'){
+    var f=tpl.fields||{};
+    ctx+='GRILLE D\'ANALYSE WTS — Applique ces étapes dans l\'ordre :\n';
+    if(f.gf1)ctx+='Étape 1 — Contexte : '+f.gf1+'\n';
+    if(f.gf2)ctx+='Étape 2 — Niveau clé : '+f.gf2+'\n';
+    if(f.gf3)ctx+='Étape 3 — Order Flow : '+f.gf3+'\n';
+    if(f.gf4)ctx+='Étape 4 — Validation setup : '+f.gf4+'\n';
+    if(f.gf5)ctx+='Étape 5 — Question coaching : '+f.gf5+'\n';
+    if(f.gf6)ctx+='Règle à rappeler : '+f.gf6+'\n';
+  }else if(tpl.type==='strategie'){
+    var f=tpl.fields||{};
+    ctx+='STRATÉGIE WTS — '+( f.sf0||'Setup')+' sur '+(f.sf1||'Futures')+'\n';
+    if(f.sf2)ctx+='CONDITIONS : '+f.sf2+'\n';
+    if(f.sf3)ctx+='ENTRÉE : '+f.sf3+'\n';
+    if(f.sf4)ctx+='STOP LOSS : '+f.sf4+'\n';
+    if(f.sf5)ctx+='OBJECTIFS : '+f.sf5+'\n';
+    if(f.sf6)ctx+='INVALIDATIONS : '+f.sf6+'\n';
+    if(f.sf7)ctx+='ERREURS FRÉQUENTES À CORRIGER : '+f.sf7+'\n';
+    if(f.sf8)ctx+='SCHÉMA DU SETUP :\n'+f.sf8+'\n';
+  }else if(tpl.type==='script'){
+    var f=tpl.fields||{};
+    ctx+='SCRIPT DE COACHING — '+(f.scf0||'Coaching guidé')+'\n';
+    ctx+='Déclencheurs : '+(f.scf1||'débriefing, post-trade')+'\n';
+    ctx+='Suis ces étapes dans l\'ordre :\n';
+    if(f.scf2)ctx+='Q1 (Ouverture) : '+f.scf2+'\n';
+    if(f.scf3)ctx+='Q2 (Contexte) : '+f.scf3+'\n';
+    if(f.scf4)ctx+='Q3 (Exécution) : '+f.scf4+'\n';
+    if(f.scf5)ctx+='Q4 (Leçon) : '+f.scf5+'\n';
+    if(f.scf6)ctx+='Conclusion : '+f.scf6+'\n';
+  }else if(tpl.type==='marche'){
+    var f=tpl.fields||{};
+    ctx+='FICHE MARCHÉ — '+(f.mf0||'Instrument')+'\n';
+    if(f.mf1)ctx+='Heures liquides : '+f.mf1+'\n';
+    if(f.mf2)ctx+='Caractéristiques : '+f.mf2+'\n';
+    if(f.mf3)ctx+='Niveaux de référence : '+f.mf3+'\n';
+    if(f.mf4)ctx+='Order Flow typique : '+f.mf4+'\n';
+    if(f.mf5)ctx+='Erreurs courantes : '+f.mf5+'\n';
+  }
+  ctx+='=== FIN TEMPLATE ===\n';
+  return ctx;
+}
+
+// ══════════════════════════════════
+// CLAUDE API
+// ══════════════════════════════════
+function buildKBCtx(){
+  var active=S.kb.filter(function(s){return s.active;});
+  if(!active.length)return '';
+  var ctx='=== MÉTHODE & CONNAISSANCES WTS ===\n';
+  active.forEach(function(s){ctx+='['+s.title+' · '+s.type+']\n'+s.content.substring(0,3500)+(s.content.length>3500?'\n[tronqué]':'')+'\n\n';});
+  ctx+='=== FIN WTS ===\n\n';return ctx;
+}
+function findRelSrc(q){
+  var active=S.kb.filter(function(s){return s.active;});if(!active.length)return null;
+  var ql=q.toLowerCase(),best=null,bs=0;
+  active.forEach(function(s){var score=0;ql.split(/\s+/).forEach(function(w){if(w.length>3&&s.content.toLowerCase().includes(w))score++;});if(s.title.toLowerCase().split(/\s+/).some(function(w){return ql.includes(w);}))score+=3;if(score>bs){bs=score;best=s;}});
+  return bs>=2?best:null;
+}
+function buildSys(){
+  var n=S.name||'le trader';
+  var lvl={debutant:'débutant (<1 an)',intermediaire:'intermédiaire (1-3 ans)',avance:'avancé (3-5 ans)',pro:'professionnel (5+ ans)'}[S.level]||'non précisé';
+  var tpl=getActiveTpl();
+  var progCtx='';
+  var prog=getProgrammeProgress();
+  if(prog){
+    progCtx='PROGRAMME : '+S.programmeDuration+' mois · Semaine '+prog.weekNum+'/'+prog.totalWeeks+' · '+prog.pct+'% complété · '+prog.daysLeft+' jours restants\n'
+      +'→ Adapte tes attentes et ton niveau d\'exigence à l\'avancement. En début de programme, sois pédagogue. En fin de programme, sois plus exigeant sur l\'exécution autonome.\n\n';
+  }
+  return buildKBCtx()+buildTplCtx(tpl)+
+'Tu es le Trading Coach de WTS, créé par Erwan Signé.\n\n'+
+'PROFIL : '+n+' · Niveau : '+lvl+' · Problèmes : '+(S.problems.join(', ')||'non précisé')+'\n'+
+progCtx+
+'RÔLE : Coach pédagogique exclusivement. PAS de signaux. PAS de prédictions. PAS de promesses.\n\n'+
+'FORMAT PAR DÉFAUT :\n[Observation] Ce que tu vois\n[Question] La question clé\n[Correction] Ce qu\'il aurait dû faire\n[Règle] Le principe WTS\n\n'+
+'MÉTHODE : Order Flow · Market Profile · Delta · VAH/VAL/POC. JAMAIS RSI/MACD/indicateurs retail.\n'+
+'PHILOSOPHIE : "Le trade se gagne avant l\'ouverture" · "Pas de cassure sans confirmation"\n\n'+
+'FORMAT : **gras** pour les points clés · Concis · Utilise le prénom · Termine par une question.';
+}
+function callClaude(txt,imgB64,onOk,onErr){
+  var relSrc=findRelSrc(txt);
+  var tpl=getActiveTpl();
+  var uc=imgB64?[{type:'image',source:{type:'base64',media_type:imgB64.match(/data:(.*?);/)[1],data:imgB64.split(',')[1]}},{type:'text',text:txt}]:txt;
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,system:buildSys(),messages:[{role:'user',content:uc}]})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.error){onErr(d.error.message);return;}
+    var t=d.content&&d.content[0]&&d.content[0].text;
+    if(t)onOk(t,relSrc?relSrc.title:null,tpl?tpl.name:null,tpl?tpl.type:null);else onErr('Réponse vide.');
+  }).catch(function(e){onErr(e.message);});
+}
+
+// ══════════════════════════════════
+// DEMO REPLIES
+// ══════════════════════════════════
+function getDemoReply(q,hasImg){
+  var t=q.toLowerCase();
+  var tpl=getActiveTpl();
+  var tn=tpl?tpl.name:null,tt=tpl?tpl.type:null;
+  if(hasImg){
+    var r="**[Observation]**\nJe vois sur ton chart une zone de consolidation suivie d'une tentative de cassure au-dessus d'un niveau clé.";
+    if(tpl&&tpl.type==='grille'&&tpl.fields&&tpl.fields.gf1){r+="\n\n*(Grille WTS appliquée — Étape 1)* "+tpl.fields.gf1;}
+    r+="\n\n**[Question]**\n**Qu'est-ce que tu avais identifié comme niveau clé avant d'entrer ?** Est-ce une VAH, VAL, POC de la session précédente ?";
+    r+="\n\n**[Correction]**\nSi tu n'avais pas pré-identifié ce niveau la veille, tu réagissais en temps réel — c'est improviser, pas trader un plan.\n\n**[Règle]**\n**Le trade se gagne avant l'ouverture.** Marque tes niveaux la veille. Le matin, tu exécutes.";
+    return{text:r,src:null,tplName:tn,tplType:tt};
+  }
+  if(t.includes('vah')||t.includes('value area'))return{text:"**[Observation]**\nLa **VAH** — Value Area High — est le plafond de la zone où 70% des échanges de la session précédente ont eu lieu.\n\n**[Question]**\nQuand le prix teste ce niveau par en-dessous — **qu'est-ce qui te permet de distinguer une cassure valide d'un rejet ?**\n\n**[Correction]**\nC'est le **delta sur la bougie de test**. Delta positif + expansion = institutionnels qui poussent. Delta négatif = absorption, probable rejet.\n\n**[Règle]**\n**Cassure VAH + delta positif + volume > moyenne = setup institutionnel.** Sans les trois, tu attends.",src:null,tplName:tn,tplType:tt};
+  if(t.includes('stratégie')||t.includes('setup')||t.includes('breakout')){
+    var r="**[Observation]**\nUn breakout valide n'est pas une bougie qui dépasse un niveau — c'est une **signature institutionnelle**.";
+    if(tpl&&tpl.type==='strategie'&&tpl.fields&&tpl.fields.sf2){r+="\n\n**Conditions de la stratégie "+( tpl.fields.sf0||'WTS')+" :**\n"+tpl.fields.sf2.replace(/\n/g,'<br>');}
+    r+="\n\n**[Question]**\nSur le dernier breakout que tu as tradé — **as-tu vérifié le delta cumulatif pendant la consolidation ?**\n\n**[Règle]**\n**Consolidation + delta croissant + cassure = entrée.** Sans les trois : tu observes.";
+    return{text:r,src:null,tplName:tn,tplType:tt};
+  }
+  if(t.includes('débriefing')||t.includes('j\'ai perdu')||t.includes('j\'ai raté')){
+    var r="**Script de coaching activé.**\n\n";
+    if(tpl&&tpl.type==='script'&&tpl.fields&&tpl.fields.scf2){r+="**"+tpl.fields.scf2+"**";}
+    else{r+="**Avant d'analyser ensemble — dis-moi ce que tu avais prévu AVANT d'entrer. Quel était ton plan exact ?**";}
+    return{text:r,src:null,tplName:tn,tplType:tt};
+  }
+  return{text:"**[Question]**\nAvant de te répondre — **qu'est-ce que toi tu as observé sur ce point ?**\n\nCommence par ta propre analyse. Le coach complète et corrige — il ne remplace pas ta réflexion.\n\n**[Coaching]**\nLa différence entre un trader qui progresse et un trader qui stagne : le premier pense avant de demander. Alors — **qu'est-ce que tu vois ?**",src:null,tplName:tn,tplType:tt};
+}
+
+// ══════════════════════════════════
+// TEMPLATE DROPDOWN (user-facing)
+// ══════════════════════════════════
+function renderTplDropdown(){
+  var body=document.getElementById('tpl-dd-body');
+  if(!S.templates.length){body.innerHTML='<div class="tpl-dd-none">Aucun template configuré dans l\'admin</div>';return;}
+  var types=['grille','strategie','script','marche'];
+  var labels={grille:'Grilles d\'analyse',strategie:'Stratégies',script:'Scripts coaching',marche:'Fiches marché'};
+  var html='';
+  types.forEach(function(type){
+    var items=S.templates.filter(function(t){return t.type===type;});
+    if(!items.length)return;
+    html+='<div class="tpl-dd-section"><div class="tpl-dd-section-lbl">'+labels[type]+'</div>';
+    items.forEach(function(tpl){
+      var sel=S.activeTplId===tpl.id?' sel':'';
+      html+='<div class="tpl-dd-item'+sel+'" onclick="activateTpl(\''+tpl.id+'\')">'
+        +'<div class="tpl-dd-dot" style="background:'+TPL_COLORS[tpl.type]+'"></div>'
+        +'<span class="tpl-dd-name">'+tpl.name+'</span>'
+        +(tpl.auto?'<span class="tpl-dd-badge">auto</span>':'')
+        +'</div>';
+    });
+    html+='</div>';
+  });
+  body.innerHTML=html;
+}
+function toggleTplDd(e){e.stopPropagation();document.getElementById('tpl-dd').classList.toggle('open');}
+function closeTplDd(){document.getElementById('tpl-dd').classList.remove('open');}
+document.addEventListener('click',function(){closeTplDd();});
+
+function activateTpl(id){
+  S.activeTplId=id;closeTplDd();updTplPill();renderTplDropdown();
+  var tpl=S.templates.find(function(t){return t.id===id;});
+  if(tpl)showToast('Template activé : '+tpl.name);
+}
+function clearActiveTpl(){S.activeTplId=null;updTplPill();renderTplDropdown();}
+
+function updTplPill(){
+  var pill=document.getElementById('tpl-active-pill');
+  if(!S.activeTplId){pill.className='tpl-active-pill';return;}
+  var tpl=S.templates.find(function(t){return t.id===S.activeTplId;});
+  if(!tpl){pill.className='tpl-active-pill';return;}
+  var c=TPL_COLORS[tpl.type]||'#4a89e8';
+  pill.className='tpl-active-pill show';
+  pill.style.background=TPL_BG[tpl.type]||'rgba(74,137,232,.12)';
+  pill.style.border='1px solid '+c+'40';
+  document.getElementById('tpl-pill-dot').style.background=c;
+  document.getElementById('tpl-pill-name').textContent=tpl.name;
+  document.getElementById('tpl-pill-name').style.color=c;
+}
+
+// ══════════════════════════════════
+// SKILLS
+// ══════════════════════════════════
+function updateSkills(){
+  S.msgN++;var c=S.msgN;
+  var sk=S.skills;
+  sk.ctx=Math.min(88,10+c*4);sk.tim=Math.min(75,5+c*2+(S.problems.includes('anticipation')?-3:3));
+  sk.rsk=Math.min(80,8+c*3+(S.problems.includes('risque')?-2:2));sk.of=Math.min(90,6+c*3.5+(S.level==='pro'?10:0));
+  function set(p,f,v){var vv=Math.round(v);document.getElementById(p).textContent=vv+'%';document.getElementById(f).style.width=vv+'%';}
+  set('p-ctx','f-ctx',sk.ctx);set('p-tim','f-tim',sk.tim);set('p-rsk','f-rsk',sk.rsk);set('p-of','f-of',sk.of);
+  var note=document.getElementById('sk-note');
+  if(c>=2){note.style.display='block';var low=sk.tim<=sk.ctx&&sk.tim<=sk.rsk&&sk.tim<=sk.of?'timing':sk.rsk<=sk.ctx&&sk.rsk<=sk.of?'risque':'of';note.innerHTML='<b>Focus :</b> '+(low==='timing'?'Ton timing est le point le plus faible — travaille la confirmation.':low==='risque'?'Ta gestion du risque mérite attention.':'Continue la lecture de l\'Order Flow.');}
+}
+function startGuided(){appendAIBub('🎯 **Analyse guidée démarrée.**\n\n**Étape 1/3 — Contexte**\n\n**Quel est le contexte du marché en ce moment ?**\n\nDécris en 2-3 phrases : la session, la tendance, et où se situe le prix par rapport à tes niveaux clés.\n\n*Ne regarde pas tes notes — dis-moi ce que tu vois réellement.*');}
+
+// ══════════════════════════════════
+// INPUT UTILS
+// ══════════════════════════════════
+function hk(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,110)+'px';}
+function fmtTime(d){return d.getHours()+'h'+String(d.getMinutes()).padStart(2,'0');}
+function fmtWords(t){return Math.round((t||'').split(/\s+/).filter(Boolean).length);}
+function updKBPill(){var a=S.kb.filter(function(s){return s.active;}).length;var p=document.getElementById('kb-pill');if(p){p.style.display=a>0?'flex':'none';document.getElementById('kb-count').textContent=a+' source'+(a>1?'s':'');}}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(function(){t.className='toast';},2200);}
+
+// ══════════════════════════════════
+// API MODAL
+// ══════════════════════════════════
+function openApiModal(){document.getElementById('api-key-inp').value=S.apiKey||'';document.getElementById('api-modal').className='modal-bg open';}
+function closeApiModal(){document.getElementById('api-modal').className='modal-bg';}
+function saveApiKey(){var k=document.getElementById('api-key-inp').value.trim();if(k){S.apiKey=k;localStorage.setItem('wts_key',k);S.demo=false;document.getElementById('status-txt').textContent='Coach actif';}closeApiModal();}
+
+// ══════════════════════════════════
+// ADMIN — ACCESS
+// ══════════════════════════════════
+document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.shiftKey&&e.key==='A'){e.preventDefault();openAdmin();}});
+function openAdmin(){document.getElementById('admin-overlay').className='admin-overlay open';document.getElementById('admin-login').style.display='block';document.getElementById('admin-panel').className='admin-panel';document.getElementById('admin-pw').value='';document.getElementById('admin-err').style.display='none';setTimeout(function(){document.getElementById('admin-pw').focus();},100);}
+function checkAdminPw(){
+  if(document.getElementById('admin-pw').value===ADMIN_PW){
+    document.getElementById('admin-login').style.display='none';
+    document.getElementById('admin-panel').className='admin-panel open';
+    switchTab('codes');renderCodeList();updateCodesStats();renderAdminSrcList();updateAdminStats();renderTplList();
+  }else{document.getElementById('admin-err').style.display='block';document.getElementById('admin-pw').value='';document.getElementById('admin-pw').focus();}
+}
+function closeAdmin(){document.getElementById('admin-overlay').className='admin-overlay';S.curSrcId=null;S.curTplId=null;}
+
+// ══════════════════════════════════
+// ADMIN — TABS
+// ══════════════════════════════════
+function switchTab(tab){
+  ['codes','kb','tpl'].forEach(function(t){
+    document.getElementById('tab-'+t+'-btn').className='a-tab'+(t===tab?' on':'');
+    var el=document.getElementById('tab-'+t);
+    if(!el)return;
+    if(t==='codes'){el.className='codes-pane'+(t===tab?' open':'');}
+    else if(t==='kb'){el.className='admin-body'+(t===tab?' open':'');}
+    else if(t==='tpl'){el.className='tpl-pane'+(t===tab?' open':'');}
+  });
+}
+
+// ══════════════════════════════════
+// ADMIN — CODES
+// ══════════════════════════════════
+function saveCodes(){localStorage.setItem('wts_codes',JSON.stringify(S.codes));}
+function generateCode(){var a=['ALPHA','BETA','DELTA','SIGMA','GAMMA','NEXUS','PRIME','ELITE','OMEGA'];var n=Math.floor(Math.random()*900+100);document.getElementById('new-code').value='WTS-'+a[Math.floor(Math.random()*a.length)]+'-'+n;}
+function addCode(){
+  var name=document.getElementById('new-name').value.trim();var code=document.getElementById('new-code').value.trim().toUpperCase().replace(/[^A-Z0-9\-]/g,'');
+  if(!name||!code){showToast('Entre un nom et un code');return;}
+  if(S.codes.some(function(c){return c.code===code;})){showToast('Ce code existe déjà');return;}
+  S.codes.push({id:'c'+Date.now(),name:name,code:code,active:true,createdAt:new Date().toISOString(),firstUsed:null,usedCount:0});
+  saveCodes();document.getElementById('new-name').value='';document.getElementById('new-code').value='';renderCodeList();updateCodesStats();showToast('✓ Code créé : '+code);
+}
+function renderCodeList(){
+  var list=document.getElementById('code-list'),noEl=document.getElementById('no-codes');
+  list.querySelectorAll('.code-item').forEach(function(i){i.remove();});
+  if(!S.codes.length){noEl.style.display='block';return;}noEl.style.display='none';
+  S.codes.forEach(function(c,i){
+    var div=document.createElement('div');div.className='code-item'+(c.active?'':' inactive');
+    div.innerHTML='<div class="code-val" onclick="copyCode(\''+c.code+'\')" title="Cliquer pour copier">'+c.code+'</div>'
+      +'<div class="code-info"><div class="code-name">'+c.name+'</div><div class="code-meta">'+(c.firstUsed?'Utilisé '+c.usedCount+'x':'Jamais utilisé')+'</div></div>'
+      +'<div class="used-dot" style="background:'+(c.firstUsed?'var(--grn)':'var(--t3)')+'"></div>'
+      +'<button class="sw'+(c.active?' on':'')+'" onclick="toggleCode('+i+')"></button>'
+      +'<button class="del-btn" onclick="deleteCode('+i+')"><svg viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>';
+    list.appendChild(div);
+  });
+}
+function toggleCode(i){S.codes[i].active=!S.codes[i].active;saveCodes();renderCodeList();updateCodesStats();showToast(S.codes[i].active?'✓ Code réactivé':'Code désactivé');}
+function deleteCode(i){if(!confirm('Supprimer le code de '+S.codes[i].name+' ?'))return;S.codes.splice(i,1);saveCodes();renderCodeList();updateCodesStats();}
+function copyCode(c){navigator.clipboard.writeText(c).then(function(){showToast('✓ Code copié : '+c);}).catch(function(){showToast(c);});}
+function updateCodesStats(){var t=S.codes.length,a=S.codes.filter(function(c){return c.active;}).length,u=S.codes.filter(function(c){return !!c.firstUsed;}).length;document.getElementById('cs-total').textContent=t;document.getElementById('cs-active').textContent=a;document.getElementById('cs-used').textContent=u;}
+
+// ══════════════════════════════════
+// ADMIN — KNOWLEDGE BASE
+// ══════════════════════════════════
+function saveKB(){localStorage.setItem('wts_kb',JSON.stringify(S.kb));updKBPill();}
+function renderAdminSrcList(){
+  var list=document.getElementById('src-list');list.innerHTML='';
+  if(!S.kb.length){list.innerHTML='<div style="padding:16px;text-align:center;font-size:12px;color:var(--t3)">Aucune source.<br>Clique "Nouvelle source".</div>';return;}
+  var svgs={video:'<path d="M5 3l6 5-6 5V3z"/>',text:'<rect x="2" y="2" width="12" height="12" rx="1.5"/><line x1="5" y1="6" x2="11" y2="6"/><line x1="5" y1="9" x2="9" y2="9"/>',rule:'<polyline points="2,12 6,7 10,9 14,4"/>'};
+  var icoMap={transcription:'video',regle:'rule',exemple:'rule',note:'text',glossaire:'text',methode:'text'};
+  S.kb.forEach(function(src){
+    var ico=icoMap[src.type]||'text';var div=document.createElement('div');div.className='src-row'+(src.id===S.curSrcId?' sel':'');
+    div.innerHTML='<div class="src-row-ico ico-'+ico+'"><svg viewBox="0 0 16 16" style="width:13px;height:13px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke:currentColor">'+svgs[ico]+'</svg></div>'
+      +'<div class="src-row-info"><div class="src-row-title">'+src.title+'</div><div class="src-row-meta">'+src.type+' · '+fmtWords(src.content)+' mots</div></div>'
+      +'<button class="src-toggle'+(src.active?' on':'')+'" onclick="event.stopPropagation();togSrc(\''+src.id+'\')"></button>';
+    div.onclick=(function(s){return function(){editSrc(s.id);};})(src);list.appendChild(div);
+  });
+}
+function togSrc(id){var s=S.kb.find(function(s){return s.id===id;});if(s){s.active=!s.active;saveKB();renderAdminSrcList();updateAdminStats();}}
+function newSource(){var s={id:'s'+Date.now(),title:'Nouvelle source',type:'transcription',content:'',active:true,ts:new Date().toISOString()};S.kb.unshift(s);saveKB();renderAdminSrcList();editSrc(s.id);updateAdminStats();}
+function editSrc(id){S.curSrcId=id;var s=S.kb.find(function(s){return s.id===id;});if(!s)return;document.getElementById('admin-empty').style.display='none';document.getElementById('admin-editor').className='admin-editor open';document.getElementById('ed-title').value=s.title;document.getElementById('ed-type').value=s.type;document.getElementById('ed-content').value=s.content;updateEdMeta();renderAdminSrcList();}
+function saveCurrentSrc(){if(!S.curSrcId)return;var s=S.kb.find(function(s){return s.id===S.curSrcId;});if(!s)return;s.title=document.getElementById('ed-title').value.trim()||'Source sans titre';s.type=document.getElementById('ed-type').value;s.content=document.getElementById('ed-content').value;s.ts=new Date().toISOString();saveKB();renderAdminSrcList();updateAdminStats();showToast('✓ Source enregistrée');}
+function deleteCurrentSrc(){if(!S.curSrcId||!confirm('Supprimer cette source définitivement ?'))return;S.kb=S.kb.filter(function(s){return s.id!==S.curSrcId;});S.curSrcId=null;saveKB();document.getElementById('admin-editor').className='admin-editor';document.getElementById('admin-empty').style.display='flex';renderAdminSrcList();updateAdminStats();}
+function updateAdminStats(){var t=S.kb.length,a=S.kb.filter(function(s){return s.active;}).length,w=S.kb.reduce(function(acc,s){return acc+(s.active?fmtWords(s.content):0);},0);document.getElementById('st-total').textContent=t;document.getElementById('st-active').textContent=a;document.getElementById('st-words').textContent=w>999?Math.round(w/1000)+'k':w;}
+function updateEdMeta(){var c=document.getElementById('ed-content').value;document.getElementById('ed-meta').textContent=fmtWords(c)+' mots · '+c.length+' caractères';}
+document.addEventListener('DOMContentLoaded',function(){var ta=document.getElementById('ed-content');if(ta)ta.addEventListener('input',updateEdMeta);});
+function handleSrcFile(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){var c=ev.target.result;if(f.name.match(/\.(srt|vtt)$/i))c=c.replace(/^\d+\n[\d:,\. -->]+\n/gm,'').replace(/<[^>]+>/g,'').replace(/\n{3,}/g,'\n\n').trim();document.getElementById('ed-content').value=c;if(!document.getElementById('ed-title').value.trim())document.getElementById('ed-title').value=f.name.replace(/\.[^.]+$/,'');updateEdMeta();};r.readAsText(f,'UTF-8');e.target.value='';}
+function edDragOver(e){e.preventDefault();document.getElementById('ed-drop').classList.add('drag');}
+function edDragLeave(){document.getElementById('ed-drop').classList.remove('drag');}
+function edDrop(e){e.preventDefault();document.getElementById('ed-drop').classList.remove('drag');var f=e.dataTransfer.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){var c=ev.target.result;if(f.name.match(/\.(srt|vtt)$/i))c=c.replace(/^\d+\n[\d:,\. -->]+\n/gm,'').replace(/<[^>]+>/g,'').replace(/\n{3,}/g,'\n\n').trim();document.getElementById('ed-content').value=c;if(!document.getElementById('ed-title').value.trim())document.getElementById('ed-title').value=f.name.replace(/\.[^.]+$/,'');updateEdMeta();};r.readAsText(f,'UTF-8');}
+
+// ══════════════════════════════════
+// ADMIN — TEMPLATES
+// ══════════════════════════════════
+function saveTpls(){localStorage.setItem('wts_templates',JSON.stringify(S.templates));renderTplDropdown();updTplPill();}
+
+function renderTplList(){
+  var list=document.getElementById('tpl-list');list.innerHTML='';
+  var filtered=S.tplFilter==='all'?S.templates:S.templates.filter(function(t){return t.type===S.tplFilter;});
+  if(!filtered.length){list.innerHTML='<div style="padding:16px;text-align:center;font-size:12px;color:var(--t3)">Aucun template.<br>Clique "Nouveau template".</div>';return;}
+  filtered.forEach(function(tpl){
+    var div=document.createElement('div');div.className='tpl-row'+(tpl.id===S.curTplId?' sel':'');
+    div.innerHTML='<div class="tpl-row-head"><div class="tpl-dot dot-'+tpl.type+'"></div><div class="tpl-row-title">'+tpl.name+'</div>'+(tpl.auto?'<div class="tpl-row-auto">auto</div>':'')+'</div><div class="tpl-row-meta">'+tpl.type+' · '+fmtWords(JSON.stringify(tpl.fields||{}))+' mots</div>';
+    div.onclick=(function(t){return function(){editTpl(t.id);};})(tpl);list.appendChild(div);
+  });
+}
+
+function filterTpl(type,el){
+  S.tplFilter=type;
+  document.querySelectorAll('.ttype').forEach(function(b){b.classList.remove('on');});
+  if(el)el.classList.add('on');
+  renderTplList();
+}
+
+function newTpl(){
+  var tpl={id:'t'+Date.now(),name:'Nouveau template',type:'grille',auto:false,fields:{},ts:new Date().toISOString()};
+  S.templates.unshift(tpl);saveTpls();renderTplList();editTpl(tpl.id);
+}
+
+function editTpl(id){
+  S.curTplId=id;var tpl=S.templates.find(function(t){return t.id===id;});if(!tpl)return;
+  document.getElementById('tpl-empty').style.display='none';
+  document.getElementById('tpl-editor').className='tpl-editor open';
+  document.getElementById('tpl-title').value=tpl.name;
+  document.getElementById('tpl-type').value=tpl.type;
+  var sw=document.getElementById('auto-sw');sw.className='auto-sw'+(tpl.auto?' on':'');
+  var fields=tpl.fields||{};
+  // Populate all field IDs
+  var allFields=['gf1','gf2','gf3','gf4','gf5','gf6','sf0','sf1','sf2','sf3','sf4','sf5','sf6','sf7','sf8','scf0','scf1','scf2','scf3','scf4','scf5','scf6','mf0','mf1','mf2','mf3','mf4','mf5'];
+  allFields.forEach(function(fid){var el=document.getElementById(fid);if(el)el.value=fields[fid]||'';});
+  switchTplForm();renderTplList();
+  updateTplMeta();
+}
+
+function switchTplForm(){
+  var type=document.getElementById('tpl-type').value;
+  ['grille','strategie','script','marche'].forEach(function(t){
+    var el=document.getElementById('tf-'+t);if(el)el.style.display=t===type?'flex':'none';
+  });
+  updateTplMeta();
+}
+
+function toggleAutoSw(){
+  var sw=document.getElementById('auto-sw');sw.classList.toggle('on');
+}
+
+function saveTpl(){
+  if(!S.curTplId)return;
+  var tpl=S.templates.find(function(t){return t.id===S.curTplId;});if(!tpl)return;
+  tpl.name=document.getElementById('tpl-title').value.trim()||'Template sans nom';
+  tpl.type=document.getElementById('tpl-type').value;
+  tpl.auto=document.getElementById('auto-sw').classList.contains('on');
+  tpl.ts=new Date().toISOString();
+  // Collect fields
+  var fields={};
+  var allFields=['gf1','gf2','gf3','gf4','gf5','gf6','sf0','sf1','sf2','sf3','sf4','sf5','sf6','sf7','sf8','scf0','scf1','scf2','scf3','scf4','scf5','scf6','mf0','mf1','mf2','mf3','mf4','mf5'];
+  allFields.forEach(function(fid){var el=document.getElementById(fid);if(el&&el.value.trim())fields[fid]=el.value.trim();});
+  tpl.fields=fields;
+  // If auto=true on grille, deactivate auto on other grilles
+  if(tpl.auto&&tpl.type==='grille'){S.templates.forEach(function(t){if(t.id!==tpl.id&&t.type==='grille')t.auto=false;});}
+  saveTpls();renderTplList();updateTplMeta();showToast('✓ Template enregistré');
+}
+
+function deleteTpl(){
+  if(!S.curTplId||!confirm('Supprimer ce template définitivement ?'))return;
+  S.templates=S.templates.filter(function(t){return t.id!==S.curTplId;});
+  if(S.activeTplId===S.curTplId)S.activeTplId=null;
+  S.curTplId=null;saveTpls();
+  document.getElementById('tpl-editor').className='tpl-editor';
+  document.getElementById('tpl-empty').style.display='flex';
+  renderTplList();
+}
+
+function updateTplMeta(){
+  var meta=document.getElementById('tpl-footer-meta');if(!meta)return;
+  if(!S.curTplId){meta.textContent='Nouveau template';return;}
+  var tpl=S.templates.find(function(t){return t.id===S.curTplId;});
+  if(tpl)meta.textContent=tpl.type+' · '+(tpl.auto?'Auto-activé au chart upload':'Activation manuelle');
+}
+</script>
+</body>
+</html>
