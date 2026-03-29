@@ -1871,9 +1871,15 @@ function renderCodeList(){
     var div=document.createElement('div');div.className='code-item'+(acc.active?'':' inactive');
     var loginInfo=acc.lastLogin?'Dernière connexion : '+new Date(acc.lastLogin).toLocaleDateString('fr-FR'):'Jamais connecté';
     var deviceInfo=acc.deviceToken?'<span style="color:var(--grn);font-size:10px">● Appareil lié</span>':'<span style="color:var(--t3);font-size:10px">○ Aucun appareil</span>';
+    var pwdId='pwd-'+i;
     div.innerHTML='<div class="code-info" style="flex:2">'
       +'<div class="code-name">'+(acc.firstname||'')+' '+(acc.lastname||'')+'</div>'
-      +'<div class="code-meta" style="color:var(--blue-br)">'+(acc.email||acc.code||'')+'</div>'
+      +'<div class="code-meta" style="color:var(--blue-br)">'+(acc.email||'')+'</div>'
+      +'<div class="code-meta" style="display:flex;align-items:center;gap:6px;margin-top:3px">'
+      +'<span style="color:var(--t3)">Mot de passe :</span>'
+      +'<span id="'+pwdId+'" style="font-family:var(--fm);color:var(--t1);letter-spacing:.05em">••••••••</span>'
+      +'<button onclick="togglePwd(\''+pwdId+'\',\''+acc.pwd+'\')" style="background:var(--elev);border:1px solid var(--b2);border-radius:5px;color:var(--t2);font-size:10px;padding:2px 7px;cursor:pointer;font-family:var(--fn)">Afficher</button>'
+      +'</div>'
       +'<div class="code-meta">'+loginInfo+' · '+deviceInfo+'</div>'
       +'</div>'
       +'<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0">'
@@ -1884,6 +1890,13 @@ function renderCodeList(){
       +'<button class="del-btn" onclick="deleteCode('+i+')"><svg viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>';
     list.appendChild(div);
   });
+}
+
+function togglePwd(id,pwd){
+  var el=document.getElementById(id);
+  var btn=el.nextElementSibling;
+  if(el.textContent==='••••••••'){el.textContent=pwd;btn.textContent='Masquer';}
+  else{el.textContent='••••••••';btn.textContent='Afficher';}
 }
 
 function resetDevice(i){
