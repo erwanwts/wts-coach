@@ -1010,7 +1010,7 @@ html,body{height:100%;background:var(--bg);font-family:var(--fn);color:var(--t1)
 // CONFIGURATION
 // ══════════════════════════════════
 var ADMIN_PW = 'wts2024'; // ← Changer avant déploiement !
-var API_KEY_BUILTIN = 'sk-ant-api03-xxxx'; // ← Optionnel : intègre ta clé ici pour tous les utilisateurs
+var API_KEY_BUILTIN = ''; // ← Optionnel : intègre ta clé ici pour tous les utilisateurs
 
 // ══════════════════════════════════
 // STATE
@@ -1492,6 +1492,7 @@ function buildSys(){
 'PROFIL : '+n+' · Niveau : '+lvl+' · Marché principal : '+(MARKETS[S.market]||MARKETS.nasdaq).name+' · Problèmes : '+(S.problems.join(', ')||'non précisé')+'\n'+
 progCtx+
 'RÔLE : Coach pédagogique exclusivement. PAS de signaux. PAS de prédictions. PAS de promesses.\n\n'+
+'RÈGLE ABSOLUE — NE JAMAIS IGNORER UNE QUESTION :\nSi le trader pose une question alors que tu attendais une réponse de sa part (ex: analyse guidée en cours, étape non complétée), tu dois TOUJOURS :\n1. Accuser réception de sa question : "Je note ta question sur [sujet]."\n2. Lui rappeler brièvement ce que tu attendais : "Mais d\'abord, réponds-moi : [ta question initiale]"\n3. Répondre à sa question APRÈS qu\'il ait répondu, ou si sa question est urgente, répondre immédiatement en une phrase courte puis revenir à ton étape.\nTu ne dois JAMAIS laisser une question sans réponse. L\'utilisateur doit toujours sentir qu\'il a été entendu.\n\n'+
 'FORMAT PAR DÉFAUT :\n[Observation] Ce que tu vois\n[Question] La question clé\n[Correction] Ce qu\'il aurait dû faire\n[Règle] Le principe WTS\n\n'+
 'MÉTHODE : Order Flow · Market Profile · Delta · VAH/VAL/POC. JAMAIS RSI/MACD/indicateurs retail.\n'+
 'PHILOSOPHIE : "Le trade se gagne avant l\'ouverture" · "Pas de cassure sans confirmation"\n\n'+
