@@ -1117,7 +1117,30 @@ var S = {
 // ── Restore persisted programme data ──
 (function(){
   var pd=localStorage.getItem('wts_programme');
-  if(pd){try{var o=JSON.parse(pd);S.programmeDuration=o.duration||0;S.programmeStart=o.start||null;S.programmeEnd=o.end||null;S.lastVisit=o.lastVisit||null;S.sessionCount=o.sessionCount||0;}catch(e){}}
+  if(pd){try{var o=JSON.parse(pd);S.programmeDuration=o.duration||0;S.programmeStart=o.start||null;S.programmeEnd=o.end||null;S.lastVisit=o.lastVisit||null;S.sessionCount=o.sessionCount||0;S.market=o.market||'nasdaq';S.name=o.name||'';S.level=o.level||'';S.problems=o.problems||[];}catch(e){}}
+
+  // ── STARTUP FLOW ──
+  // Always show gate first — onboarding only after successful login
+  var ob=document.getElementById('ob');
+  if(ob)ob.classList.add('hidden');  // hide onboarding initially
+  setTimeout(function(){
+    if(isSessionValid()){
+      // Already logged in — restore name from account
+      var email=localStorage.getItem('wts_access_email');
+      var acc=S.codes.find(function(a){return a.email===email;});
+      if(acc&&acc.firstname)S.name=acc.firstname;
+      // Check if onboarding was already done
+      if(localStorage.getItem('wts_onboarded')==='1'){
+        launchApp();
+      } else {
+        // Show onboarding
+        if(ob){ob.classList.remove('hidden');}
+      }
+    } else {
+      // Not logged in — show gate
+      showGate();
+    }
+  },0);
 })();
 
 // TPL colors
@@ -1164,22 +1187,17 @@ function finishOnboarding(){
     S.programmeEnd=end.toISOString();
     saveProgramme();
   }
+  // Mark onboarding as done — never show again
+  localStorage.setItem('wts_onboarded','1');
   document.getElementById('ob').classList.add('hidden');
-  if(isSessionValid()){
-    // Restore name from account if available
-    var email=localStorage.getItem('wts_access_email');
-    var acc=S.codes.find(function(a){return a.email===email;});
-    if(acc&&acc.firstname&&!S.name)S.name=acc.firstname;
-    launchApp();
-  }else{
-    showGate();
-  }
+  launchApp();
 }
 
 function saveProgramme(){
   localStorage.setItem('wts_programme',JSON.stringify({
     duration:S.programmeDuration,start:S.programmeStart,
-    end:S.programmeEnd,lastVisit:S.lastVisit,sessionCount:S.sessionCount,market:S.market
+    end:S.programmeEnd,lastVisit:S.lastVisit,sessionCount:S.sessionCount,
+    market:S.market,name:S.name,level:S.level,problems:S.problems
   }));
 }
 
@@ -1241,7 +1259,15 @@ function submitGate(){
   if(acc.firstname&&!S.name){S.name=acc.firstname;}
 
   document.getElementById('gate').classList.add('hidden');
-  launchApp();
+
+  // If onboarding already done → go straight to app
+  if(localStorage.getItem('wts_onboarded')==='1'){
+    launchApp();
+  } else {
+    // First time — show onboarding
+    var ob=document.getElementById('ob');
+    if(ob)ob.classList.remove('hidden');
+  }
 }
 
 function isSessionValid(){
