@@ -629,12 +629,13 @@ html,body{height:100%;background:var(--bg);font-family:var(--fn);color:var(--t1)
     </div>
     <div class="gate-card">
       <div class="gate-lock-ico"><svg viewBox="0 0 22 22"><rect x="4" y="10" width="14" height="11" rx="2.5"/><path d="M7.5 10V7a3.5 3.5 0 017 0v3"/><circle cx="11" cy="15.5" r="1.8" fill="var(--blue-br)" stroke="none"/></svg></div>
-      <div class="gate-title">Code d'accès requis</div>
-      <div class="gate-desc">Ce coach est réservé aux membres WTS.<br>Entre ton code d'accès personnel pour continuer.</div>
-      <input class="gate-inp" id="gate-inp" type="text" placeholder="Ex: WTS-DAVID-2024" maxlength="32" autocomplete="off" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9\-]/g,'');clearGateErr()" onkeydown="if(event.key==='Enter')submitGate()">
+      <div class="gate-title">Connexion</div>
+      <div class="gate-desc">Accès réservé aux membres WTS.<br>Utilise les identifiants reçus par email.</div>
+      <input class="gate-inp" id="gate-email" type="email" placeholder="Ton adresse email" autocomplete="email" style="text-transform:none;letter-spacing:0;font-size:13px;font-family:var(--fn);text-align:left;padding-left:14px" oninput="clearGateErr()" onkeydown="if(event.key==='Enter')document.getElementById('gate-pwd').focus()">
+      <input class="gate-inp" id="gate-pwd" type="password" placeholder="Mot de passe" autocomplete="current-password" style="text-transform:none;letter-spacing:.05em;text-align:left;padding-left:14px;margin-top:8px" oninput="clearGateErr()" onkeydown="if(event.key==='Enter')submitGate()">
       <div class="gate-err" id="gate-err"></div>
-      <button class="gate-submit" onclick="submitGate()">Accéder au coach →</button>
-      <div class="gate-hint">Code envoyé par email à l'achat.<br>Pas encore membre ? <a href="#" onclick="return false">Rejoindre WTS →</a></div>
+      <button class="gate-submit" onclick="submitGate()">Se connecter →</button>
+      <div class="gate-hint">Identifiants envoyés par email à l'inscription.<br>Problème ? <a href="mailto:contact@wts.fr">Contacter WTS</a></div>
     </div>
   </div>
 </div>
