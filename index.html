@@ -814,23 +814,37 @@ html,body{height:100%;background:var(--bg);font-family:var(--fn);color:var(--t1)
       <div class="cs-stats">
         <div class="cs-box"><div class="cs-val" id="cs-total">0</div><div class="cs-lbl">Total</div></div>
         <div class="cs-box"><div class="cs-val" id="cs-active">0</div><div class="cs-lbl">Actifs</div></div>
-        <div class="cs-box"><div class="cs-val" id="cs-used">0</div><div class="cs-lbl">Utilisés</div></div>
+        <div class="cs-box"><div class="cs-val" id="cs-used">0</div><div class="cs-lbl">Connectés</div></div>
       </div>
-      <div class="codes-how"><b>Comment ça fonctionne :</b> Chaque étudiant reçoit son code unique à l'achat. Il le saisit après l'onboarding — mémorisé dans son navigateur. Tu peux <b>désactiver</b> un code à tout moment (blocage immédiat) sans le supprimer. <b>Si aucun code n'existe</b>, l'accès est libre (mode test).</div>
+
+      <div class="codes-how">
+        <b>Sécurité renforcée :</b> Chaque élève a un email + mot de passe généré automatiquement. Un <b>token unique</b> est lié à son appareil à la première connexion — impossible d'utiliser les mêmes identifiants depuis un autre navigateur. Tu peux <b>désactiver</b> un compte ou <b>réinitialiser</b> l'appareil à tout moment.
+      </div>
+
       <div class="codes-add-block">
-        <div class="sec-lbl">Créer un code</div>
+        <div class="sec-lbl">Créer un accès étudiant</div>
         <div class="code-inp-row">
-          <input class="cinp" id="new-name" type="text" placeholder="Prénom Nom de l'étudiant">
-          <input class="cinp mono" id="new-code" type="text" placeholder="CODE-ACCES" maxlength="28" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9\-]/g,'')">
+          <input class="cinp" id="new-firstname" type="text" placeholder="Prénom">
+          <input class="cinp" id="new-lastname" type="text" placeholder="Nom">
+        </div>
+        <div class="code-inp-row">
+          <input class="cinp" id="new-email" type="email" placeholder="Email de l'étudiant" style="flex:2">
+          <input class="cinp mono" id="new-pwd" type="text" placeholder="Mot de passe auto" style="flex:1;font-size:11px">
         </div>
         <div class="code-add-actions">
-          <button class="gen-btn" onclick="generateCode()">⚡ Générer auto</button>
-          <button class="create-btn" onclick="addCode()">Créer →</button>
+          <button class="gen-btn" onclick="generatePwd()">⚡ Générer mot de passe</button>
+          <button class="create-btn" onclick="addAccount()">Créer l'accès →</button>
         </div>
       </div>
-      <div class="sec-lbl">Codes existants</div>
+
+      <div style="display:flex;gap:8px;margin-bottom:4px">
+        <div class="sec-lbl" style="flex:1;margin-bottom:0;align-self:center">Comptes existants</div>
+        <button class="gen-btn" onclick="exportAccounts()" style="font-size:10px;padding:5px 10px">💾 Exporter</button>
+        <button class="gen-btn" onclick="document.getElementById('import-file').click()" style="font-size:10px;padding:5px 10px">📂 Importer</button>
+        <input type="file" id="import-file" accept=".json" style="display:none" onchange="importAccounts(event)">
+      </div>
       <div class="code-list" id="code-list">
-        <div class="no-codes" id="no-codes">Aucun code créé.<br><span style="font-size:11px">Tant qu'aucun code n'existe, l'accès est ouvert.</span></div>
+        <div class="no-codes" id="no-codes">Aucun compte créé.<br><span style="font-size:11px">Tant qu'aucun compte n'existe, l'accès est libre (mode test).</span></div>
       </div>
     </div>
 
@@ -1151,8 +1165,13 @@ function finishOnboarding(){
   }
   document.getElementById('ob').classList.add('hidden');
   if(S.codes.length>0){
-    var stored=localStorage.getItem('wts_access')||'';
-    if(stored&&isCodeValid(stored)){launchApp();}else{showGate();}
+    if(isSessionValid()){
+      // Restore name from account if available
+      var email=localStorage.getItem('wts_access_email');
+      var acc=S.codes.find(function(a){return a.email===email;});
+      if(acc&&acc.firstname&&!S.name)S.name=acc.firstname;
+      launchApp();
+    }else{showGate();}
   }else{launchApp();}
 }
 
@@ -1164,21 +1183,77 @@ function saveProgramme(){
 }
 
 // ══════════════════════════════════
-// ACCESS GATE
+// ACCESS GATE — email + password + device token
 // ══════════════════════════════════
-function showGate(){document.getElementById('gate').classList.remove('hidden');}
-function isCodeValid(code){if(!code)return false;var c=code.trim().toUpperCase();return S.codes.some(function(e){return e.code===c&&e.active;});}
-function submitGate(){
-  var val=document.getElementById('gate-inp').value.trim().toUpperCase();
-  if(!val){shakeGate();return;}
-  if(isCodeValid(val)){
-    localStorage.setItem('wts_access',val);
-    var e=S.codes.find(function(c){return c.code===val;});
-    if(e){if(!e.firstUsed)e.firstUsed=new Date().toISOString();e.usedCount=(e.usedCount||0)+1;saveCodes();}
-    document.getElementById('gate').classList.add('hidden');launchApp();
-  }else{shakeGate();document.getElementById('gate-err').textContent='Code invalide ou désactivé. Vérifie ton code ou contacte WTS.';}
+function showGate(){document.getElementById('gate').classList.remove('hidden');setTimeout(function(){document.getElementById('gate-email').focus();},100);}
+
+function getDeviceToken(){
+  var t=localStorage.getItem('wts_device_token');
+  if(!t){t='dev_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);localStorage.setItem('wts_device_token',t);}
+  return t;
 }
-function shakeGate(){var i=document.getElementById('gate-inp');i.classList.add('shake');setTimeout(function(){i.classList.remove('shake');},400);}
+
+function submitGate(){
+  var email=document.getElementById('gate-email').value.trim().toLowerCase();
+  var pwd=document.getElementById('gate-pwd').value.trim();
+  if(!email||!pwd){shakeGate();return;}
+
+  // Free access if no accounts configured yet (test mode)
+  if(!S.codes.length){document.getElementById('gate').classList.add('hidden');launchApp();return;}
+
+  var acc=S.codes.find(function(a){return a.email===email&&a.active;});
+  if(!acc){
+    shakeGate();
+    document.getElementById('gate-err').textContent='Email non reconnu ou compte désactivé.';
+    return;
+  }
+  if(acc.pwd!==pwd){
+    shakeGate();
+    document.getElementById('gate-err').textContent='Mot de passe incorrect.';
+    return;
+  }
+
+  var deviceToken=getDeviceToken();
+
+  // Device check — if already linked to another device, block
+  if(acc.deviceToken&&acc.deviceToken!==deviceToken){
+    document.getElementById('gate-err').textContent='Ce compte est déjà utilisé sur un autre appareil. Contacte WTS pour un reset.';
+    return;
+  }
+
+  // First login — link this device
+  if(!acc.deviceToken){acc.deviceToken=deviceToken;}
+
+  // Update login info
+  acc.lastLogin=new Date().toISOString();
+  acc.loginCount=(acc.loginCount||0)+1;
+  saveAccounts();
+
+  // Store session
+  localStorage.setItem('wts_access_email',email);
+  localStorage.setItem('wts_access_token',deviceToken);
+
+  // Pre-fill name from account
+  if(acc.firstname&&!S.name){S.name=acc.firstname;}
+
+  document.getElementById('gate').classList.add('hidden');
+  launchApp();
+}
+
+function isSessionValid(){
+  var email=localStorage.getItem('wts_access_email');
+  var token=localStorage.getItem('wts_access_token');
+  if(!email||!token)return false;
+  if(!S.codes.length)return true; // test mode
+  var acc=S.codes.find(function(a){return a.email===email&&a.active;});
+  if(!acc)return false;
+  return acc.deviceToken===token;
+}
+
+function shakeGate(){
+  var inputs=[document.getElementById('gate-email'),document.getElementById('gate-pwd')];
+  inputs.forEach(function(i){if(i){i.classList.add('shake');setTimeout(function(){i.classList.remove('shake');},400);}});
+}
 function clearGateErr(){document.getElementById('gate-err').textContent='';}
 
 // ══════════════════════════════════
