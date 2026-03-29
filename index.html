@@ -1739,26 +1739,27 @@ function getDemoReply(q,hasImg){
   var tpl=getActiveTpl();
   var tn=tpl?tpl.name:null,tt=tpl?tpl.type:null;
   if(hasImg){
-    var r="**[Observation]**\nJe vois sur ton chart une zone de consolidation suivie d'une tentative de cassure au-dessus d'un niveau clé.";
-    if(tpl&&tpl.type==='grille'&&tpl.fields&&tpl.fields.gf1){r+="\n\n*(Grille WTS appliquée — Étape 1)* "+tpl.fields.gf1;}
-    r+="\n\n**[Question]**\n**Qu'est-ce que tu avais identifié comme niveau clé avant d'entrer ?** Est-ce une VAH, VAL, POC de la session précédente ?";
-    r+="\n\n**[Correction]**\nSi tu n'avais pas pré-identifié ce niveau la veille, tu réagissais en temps réel — c'est improviser, pas trader un plan.\n\n**[Règle]**\n**Le trade se gagne avant l'ouverture.** Marque tes niveaux la veille. Le matin, tu exécutes.";
+    var r="Je vois sur ton chart une zone de consolidation avec une tentative de cassure sur un niveau clé.";
+    if(tpl&&tpl.type==='grille'&&tpl.fields&&tpl.fields.gf1){r+="\n\n*(Grille WTS — "+tpl.fields.gf1+")*";}
+    r+="\n\nMaintenant dis-moi — **ce niveau, tu l'avais marqué la veille ou tu l'as identifié en temps réel ce matin ?** C'est là que tout se joue. Si tu réagissais en direct, tu improvisais — pas trader un plan.\n\n*Le trade se gagne avant l'ouverture. Tes niveaux se marquent la veille.*";
     return{text:r,src:null,tplName:tn,tplType:tt};
   }
-  if(t.includes('vah')||t.includes('value area'))return{text:"**[Observation]**\nLa **VAH** — Value Area High — est le plafond de la zone où 70% des échanges de la session précédente ont eu lieu.\n\n**[Question]**\nQuand le prix teste ce niveau par en-dessous — **qu'est-ce qui te permet de distinguer une cassure valide d'un rejet ?**\n\n**[Correction]**\nC'est le **delta sur la bougie de test**. Delta positif + expansion = institutionnels qui poussent. Delta négatif = absorption, probable rejet.\n\n**[Règle]**\n**Cassure VAH + delta positif + volume > moyenne = setup institutionnel.** Sans les trois, tu attends.",src:null,tplName:tn,tplType:tt};
+  if(t.includes('vah')||t.includes('value area'))return{text:"La **VAH** — Value Area High — c'est le plafond de la zone où 70% des échanges de la session précédente ont eu lieu. Imagine une journée de marché comme un marché de fruits et légumes : 70% des transactions se font dans un périmètre précis. La VAH, c'est le bord haut de ce périmètre.\n\nMaintenant la vraie question : quand le prix revient tester ce niveau par en-dessous, **comment tu distingues une vraie cassure d'un faux mouvement ?** Qu'est-ce que tu regardes ?",src:null,tplName:tn,tplType:tt};
+  if(t.includes('sais pas')||t.includes('comprends rien')||t.includes('comprends pas'))return{text:"C'est normal de ne pas encore tout voir. On va simplifier.\n\nImagine que le marché c'est comme un couloir. La VAH c'est le plafond du couloir, la VAL c'est le plancher. La plupart des joueurs bougent à l'intérieur. Quand le prix sort de ce couloir avec conviction — du volume, du delta positif — c'est là qu'on agit.\n\n**Qu'est-ce qui t'a bloqué exactement ?** C'est la lecture du delta, les niveaux, ou autre chose ?",src:null,tplName:tn,tplType:tt};
   if(t.includes('stratégie')||t.includes('setup')||t.includes('breakout')){
-    var r="**[Observation]**\nUn breakout valide n'est pas une bougie qui dépasse un niveau — c'est une **signature institutionnelle**.";
-    if(tpl&&tpl.type==='strategie'&&tpl.fields&&tpl.fields.sf2){r+="\n\n**Conditions de la stratégie "+( tpl.fields.sf0||'WTS')+" :**\n"+tpl.fields.sf2.replace(/\n/g,'<br>');}
-    r+="\n\n**[Question]**\nSur le dernier breakout que tu as tradé — **as-tu vérifié le delta cumulatif pendant la consolidation ?**\n\n**[Règle]**\n**Consolidation + delta croissant + cassure = entrée.** Sans les trois : tu observes.";
+    var r="Un breakout valide c'est pas juste une bougie qui dépasse un niveau — c'est une **signature institutionnelle**. Les gros acteurs laissent des traces dans le delta et le volume.";
+    if(tpl&&tpl.type==='strategie'&&tpl.fields&&tpl.fields.sf2){r+="\n\nLes conditions de ton setup **"+( tpl.fields.sf0||'WTS')+"** :\n"+tpl.fields.sf2.replace(/\n/g,'<br>');}
+    r+="\n\nSur le dernier breakout que tu as tradé — **le delta était dans quel sens sur la bougie de cassure ?**";
     return{text:r,src:null,tplName:tn,tplType:tt};
   }
   if(t.includes('débriefing')||t.includes('j\'ai perdu')||t.includes('j\'ai raté')){
-    var r="**Script de coaching activé.**\n\n";
-    if(tpl&&tpl.type==='script'&&tpl.fields&&tpl.fields.scf2){r+="**"+tpl.fields.scf2+"**";}
-    else{r+="**Avant d'analyser ensemble — dis-moi ce que tu avais prévu AVANT d'entrer. Quel était ton plan exact ?**";}
+    var r="OK, on va débriéfer ça correctement.\n\n";
+    if(tpl&&tpl.type==='script'&&tpl.fields&&tpl.fields.scf2){r+=tpl.fields.scf2;}
+    else{r+="**Avant tout — dis-moi ce que tu avais prévu AVANT d'entrer. Ton plan exact, pas ce qui s'est passé après.**";}
     return{text:r,src:null,tplName:tn,tplType:tt};
   }
-  return{text:"**[Question]**\nAvant de te répondre — **qu'est-ce que toi tu as observé sur ce point ?**\n\nCommence par ta propre analyse. Le coach complète et corrige — il ne remplace pas ta réflexion.\n\n**[Coaching]**\nLa différence entre un trader qui progresse et un trader qui stagne : le premier pense avant de demander. Alors — **qu'est-ce que tu vois ?**",src:null,tplName:tn,tplType:tt};
+  if(t.includes('tendance')||t.includes('marché')||t.includes('direction'))return{text:"Bonne question — mais je veux d'abord savoir ce que **toi** tu vois. Décris-moi le marché en 2-3 phrases : la session, où est le prix par rapport à la VAH/VAL d'hier, et ce que tu ressens comme direction. Je corrige et complète après.",src:null,tplName:tn,tplType:tt};
+  return{text:"Avant de te répondre — **qu'est-ce que toi tu as observé sur ce point ?**\n\nCommence par ta propre analyse. Je complète et corrige — mais c'est toi qui penses en premier. C'est comme ça qu'on progresse vraiment.\n\nAlors, qu'est-ce que tu vois ?",src:null,tplName:tn,tplType:tt};
 }
 
 // ══════════════════════════════════
