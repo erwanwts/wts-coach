@@ -1176,7 +1176,10 @@ function updMarketPanel(){
 // APP LAUNCH
 // ══════════════════════════════════
 function launchApp(){
-  S.demo=!S.apiKey;
+  // If no local API key, check if Netlify function is available
+  // If on netlify.app domain, assume function is available → not demo
+  var onNetlify = window.location.hostname.includes('netlify.app') || window.location.hostname.includes('netlify.com');
+  S.demo = !S.apiKey && !onNetlify;
   var app=document.getElementById('app');app.style.display='flex';setTimeout(function(){app.classList.remove('hidden');},30);
   var n=S.name||'Trader';
   document.getElementById('uava').textContent=n.charAt(0).toUpperCase();
@@ -1502,9 +1505,23 @@ function callClaude(txt,imgB64,onOk,onErr){
   var relSrc=findRelSrc(txt);
   var tpl=getActiveTpl();
   var uc=imgB64?[{type:'image',source:{type:'base64',media_type:imgB64.match(/data:(.*?);/)[1],data:imgB64.split(',')[1]}},{type:'text',text:txt}]:txt;
-  fetch('https://api.anthropic.com/v1/messages',{
+
+  // Use Netlify proxy if no local API key (production mode)
+  // Use direct Anthropic API if local key is set (dev/admin mode)
+  var endpoint = S.apiKey
+    ? 'https://api.anthropic.com/v1/messages'
+    : '/.netlify/functions/claude';
+
+  var headers = {'Content-Type':'application/json'};
+  if(S.apiKey){
+    headers['x-api-key'] = S.apiKey;
+    headers['anthropic-version'] = '2023-06-01';
+    headers['anthropic-dangerous-direct-browser-access'] = 'true';
+  }
+
+  fetch(endpoint,{
     method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    headers: headers,
     body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,system:buildSys(),messages:[{role:'user',content:uc}]})
   }).then(function(r){return r.json();}).then(function(d){
     if(d.error){onErr(d.error.message);return;}
