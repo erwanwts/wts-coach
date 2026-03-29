@@ -1449,6 +1449,7 @@ function handleImgUpload(e){
 }
 function renderImgList(){
   var list=document.getElementById('img-list'),empty=document.getElementById('img-empty');
+  if(!list||!empty)return;
   if(!S.images.length){empty.style.display='block';list.querySelectorAll('.img-item').forEach(function(i){i.remove();});return;}
   empty.style.display='none';list.innerHTML='';
   S.images.forEach(function(img){
@@ -1462,10 +1463,14 @@ function renderImgList(){
 }
 function queueImg(img){
   S.queuedImg=img;
-  document.getElementById('iq-thumb').src=img.dataUrl;
-  document.getElementById('iq-name').textContent=img.name;
-  document.getElementById('img-queued').className='img-queued show';
-  document.getElementById('inp').placeholder='Que veux-tu analyser sur ce chart ?';
+  var thumb=document.getElementById('iq-thumb');
+  var name=document.getElementById('iq-name');
+  var queued=document.getElementById('img-queued');
+  var inp=document.getElementById('inp');
+  if(thumb)thumb.src=img.dataUrl;
+  if(name)name.textContent=img.name;
+  if(queued)queued.className='img-queued show';
+  if(inp)inp.placeholder='Que veux-tu analyser sur ce chart ?';
   // Auto-activate the grille template if not already active
   if(!S.activeTplId){
     var g=S.templates.find(function(t){return t.type==='grille'&&t.auto;});
@@ -1473,7 +1478,14 @@ function queueImg(img){
   }
   renderImgList();document.getElementById('inp').focus();
 }
-function cancelQueued(){S.queuedImg=null;document.getElementById('img-queued').className='img-queued';document.getElementById('inp').placeholder='Pose une question, décris ta situation, ou envoie ton analyse...';renderImgList();}
+function cancelQueued(){
+  S.queuedImg=null;
+  var queued=document.getElementById('img-queued');
+  var inp=document.getElementById('inp');
+  if(queued)queued.className='img-queued';
+  if(inp)inp.placeholder='Pose une question, décris ta situation, ou envoie ton analyse...';
+  renderImgList();
+}
 function delImg(id){S.images=S.images.filter(function(i){return i.id!==id;});if(S.queuedImg&&S.queuedImg.id===id)cancelQueued();renderImgList();}
 function markAnalyzed(id){var img=S.images.find(function(i){return i.id===id;});if(img)img.analyzed=true;renderImgList();}
 
