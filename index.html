@@ -1826,33 +1826,104 @@ function switchTab(tab){
 // ══════════════════════════════════
 // ADMIN — CODES
 // ══════════════════════════════════
-function saveCodes(){localStorage.setItem('wts_codes',JSON.stringify(S.codes));}
-function generateCode(){var a=['ALPHA','BETA','DELTA','SIGMA','GAMMA','NEXUS','PRIME','ELITE','OMEGA'];var n=Math.floor(Math.random()*900+100);document.getElementById('new-code').value='WTS-'+a[Math.floor(Math.random()*a.length)]+'-'+n;}
-function addCode(){
-  var name=document.getElementById('new-name').value.trim();var code=document.getElementById('new-code').value.trim().toUpperCase().replace(/[^A-Z0-9\-]/g,'');
-  if(!name||!code){showToast('Entre un nom et un code');return;}
-  if(S.codes.some(function(c){return c.code===code;})){showToast('Ce code existe déjà');return;}
-  S.codes.push({id:'c'+Date.now(),name:name,code:code,active:true,createdAt:new Date().toISOString(),firstUsed:null,usedCount:0});
-  saveCodes();document.getElementById('new-name').value='';document.getElementById('new-code').value='';renderCodeList();updateCodesStats();showToast('✓ Code créé : '+code);
+// ══════════════════════════════════
+// ADMIN — ACCOUNTS (email + password + device token)
+// ══════════════════════════════════
+function saveAccounts(){localStorage.setItem('wts_codes',JSON.stringify(S.codes));}
+function saveCodes(){saveAccounts();}
+
+function generatePwd(){
+  var adj=['Tiger','Eagle','Alpha','Delta','Sigma','Nexus','Storm','Blade','Swift','Prime'];
+  var n=Math.floor(Math.random()*900+100);
+  document.getElementById('new-pwd').value=adj[Math.floor(Math.random()*adj.length)]+'-'+n;
 }
+
+function addAccount(){
+  var first=document.getElementById('new-firstname').value.trim();
+  var last=document.getElementById('new-lastname').value.trim();
+  var email=document.getElementById('new-email').value.trim().toLowerCase();
+  var pwd=document.getElementById('new-pwd').value.trim();
+  if(!first||!email||!pwd){showToast('Prénom, email et mot de passe requis');return;}
+  if(S.codes.some(function(c){return c.email===email;})){showToast('Cet email existe déjà');return;}
+  var acc={id:'a'+Date.now(),firstname:first,lastname:last,email:email,pwd:pwd,active:true,createdAt:new Date().toISOString(),deviceToken:null,lastLogin:null,loginCount:0};
+  S.codes.push(acc);
+  saveAccounts();
+  document.getElementById('new-firstname').value='';
+  document.getElementById('new-lastname').value='';
+  document.getElementById('new-email').value='';
+  document.getElementById('new-pwd').value='';
+  renderCodeList();updateCodesStats();
+  copyCredentials(acc);
+  showToast('✓ Compte créé — identifiants copiés !');
+}
+
+function copyCredentials(acc){
+  var txt='Email : '+acc.email+'\nMot de passe : '+acc.pwd+'\nLien : '+window.location.origin+window.location.pathname;
+  navigator.clipboard.writeText(txt).catch(function(){});
+}
+
 function renderCodeList(){
   var list=document.getElementById('code-list'),noEl=document.getElementById('no-codes');
   list.querySelectorAll('.code-item').forEach(function(i){i.remove();});
-  if(!S.codes.length){noEl.style.display='block';return;}noEl.style.display='none';
-  S.codes.forEach(function(c,i){
-    var div=document.createElement('div');div.className='code-item'+(c.active?'':' inactive');
-    div.innerHTML='<div class="code-val" onclick="copyCode(\''+c.code+'\')" title="Cliquer pour copier">'+c.code+'</div>'
-      +'<div class="code-info"><div class="code-name">'+c.name+'</div><div class="code-meta">'+(c.firstUsed?'Utilisé '+c.usedCount+'x':'Jamais utilisé')+'</div></div>'
-      +'<div class="used-dot" style="background:'+(c.firstUsed?'var(--grn)':'var(--t3)')+'"></div>'
-      +'<button class="sw'+(c.active?' on':'')+'" onclick="toggleCode('+i+')"></button>'
+  if(!S.codes.length){noEl.style.display='block';return;}
+  noEl.style.display='none';
+  S.codes.forEach(function(acc,i){
+    var div=document.createElement('div');div.className='code-item'+(acc.active?'':' inactive');
+    var loginInfo=acc.lastLogin?'Dernière connexion : '+new Date(acc.lastLogin).toLocaleDateString('fr-FR'):'Jamais connecté';
+    var deviceInfo=acc.deviceToken?'<span style="color:var(--grn);font-size:10px">● Appareil lié</span>':'<span style="color:var(--t3);font-size:10px">○ Aucun appareil</span>';
+    div.innerHTML='<div class="code-info" style="flex:2">'
+      +'<div class="code-name">'+(acc.firstname||'')+' '+(acc.lastname||'')+'</div>'
+      +'<div class="code-meta" style="color:var(--blue-br)">'+(acc.email||acc.code||'')+'</div>'
+      +'<div class="code-meta">'+loginInfo+' · '+deviceInfo+'</div>'
+      +'</div>'
+      +'<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0">'
+      +'<button class="gen-btn" style="font-size:10px;padding:4px 8px" onclick="copyCredentials(S.codes['+i+'])">📋 Copier</button>'
+      +(acc.deviceToken?'<button class="gen-btn" style="font-size:10px;padding:4px 8px;color:#f5b81c" onclick="resetDevice('+i+')">📱 Reset</button>':'')
+      +'</div>'
+      +'<button class="sw'+(acc.active?' on':'')+'" onclick="toggleCode('+i+')" title="'+(acc.active?'Désactiver':'Réactiver')+'"></button>'
       +'<button class="del-btn" onclick="deleteCode('+i+')"><svg viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>';
     list.appendChild(div);
   });
 }
-function toggleCode(i){S.codes[i].active=!S.codes[i].active;saveCodes();renderCodeList();updateCodesStats();showToast(S.codes[i].active?'✓ Code réactivé':'Code désactivé');}
-function deleteCode(i){if(!confirm('Supprimer le code de '+S.codes[i].name+' ?'))return;S.codes.splice(i,1);saveCodes();renderCodeList();updateCodesStats();}
-function copyCode(c){navigator.clipboard.writeText(c).then(function(){showToast('✓ Code copié : '+c);}).catch(function(){showToast(c);});}
-function updateCodesStats(){var t=S.codes.length,a=S.codes.filter(function(c){return c.active;}).length,u=S.codes.filter(function(c){return !!c.firstUsed;}).length;document.getElementById('cs-total').textContent=t;document.getElementById('cs-active').textContent=a;document.getElementById('cs-used').textContent=u;}
+
+function resetDevice(i){
+  if(!confirm('Réinitialiser l\'appareil de '+S.codes[i].firstname+' ?'))return;
+  S.codes[i].deviceToken=null;saveAccounts();renderCodeList();showToast('✓ Appareil réinitialisé');
+}
+function toggleCode(i){S.codes[i].active=!S.codes[i].active;saveAccounts();renderCodeList();updateCodesStats();showToast(S.codes[i].active?'✓ Compte réactivé':'Compte désactivé');}
+function deleteCode(i){if(!confirm('Supprimer le compte de '+(S.codes[i].firstname||S.codes[i].name||'cet utilisateur')+' ?'))return;S.codes.splice(i,1);saveAccounts();renderCodeList();updateCodesStats();}
+
+function exportAccounts(){
+  var data=JSON.stringify(S.codes,null,2);
+  var blob=new Blob([data],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='wts-comptes-'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();showToast('✓ Comptes exportés');
+}
+
+function importAccounts(e){
+  var f=e.target.files[0];if(!f)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var imported=JSON.parse(ev.target.result);
+      if(!Array.isArray(imported)){showToast('Fichier invalide');return;}
+      var added=0;
+      imported.forEach(function(acc){
+        if(acc.email&&!S.codes.some(function(c){return c.email===acc.email;})){S.codes.push(acc);added++;}
+      });
+      saveAccounts();renderCodeList();updateCodesStats();showToast('✓ '+added+' compte(s) importé(s)');
+    }catch(err){showToast('Erreur import');}
+  };
+  reader.readAsText(f);e.target.value='';
+}
+
+function updateCodesStats(){
+  var t=S.codes.length,a=S.codes.filter(function(c){return c.active;}).length,u=S.codes.filter(function(c){return !!c.lastLogin;}).length;
+  document.getElementById('cs-total').textContent=t;
+  document.getElementById('cs-active').textContent=a;
+  document.getElementById('cs-used').textContent=u;
+}
 
 // ══════════════════════════════════
 // ADMIN — KNOWLEDGE BASE
