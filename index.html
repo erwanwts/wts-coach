@@ -469,6 +469,18 @@ html,body{height:100%;background:var(--bg);font-family:var(--fn);color:var(--t1)
 .tpl-save-btn{padding:7px 18px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:500;cursor:pointer;transition:opacity .15s}
 .tpl-save-btn:hover{opacity:.88}
 
+/* Template image upload */
+.tpl-img-zone{border:1.5px dashed var(--b2);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--card);position:relative}
+.tpl-img-zone:hover{border-color:var(--blue);background:var(--blue-t)}
+.tpl-img-zone.has-img{border-style:solid;border-color:var(--blue);padding:0;overflow:hidden}
+.tpl-img-preview{width:100%;max-height:220px;object-fit:contain;display:block;border-radius:8px;background:var(--elev)}
+.tpl-img-zone-txt{font-size:12px;font-weight:500;color:var(--t2);margin-bottom:3px}
+.tpl-img-zone-sub{font-size:11px;color:var(--t3)}
+.tpl-img-actions{display:flex;gap:6px;margin-top:8px}
+.tpl-img-del{padding:5px 12px;border-radius:6px;background:var(--red-t);border:1px solid rgba(232,84,56,.2);color:#ff7c5c;font-size:11px;font-family:var(--fn);cursor:pointer}
+.tpl-img-change{padding:5px 12px;border-radius:6px;background:var(--elev);border:1px solid var(--b2);color:var(--t2);font-size:11px;font-family:var(--fn);cursor:pointer}
+.tpl-img-info{font-size:11px;color:var(--t3);line-height:1.5;margin-top:6px}
+
 /* Modal + toast */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:300}
 .modal-bg.open{display:flex}
@@ -934,10 +946,22 @@ html,body{height:100%;background:var(--bg);font-family:var(--fn);color:var(--t1)
                 <div class="tpl-field"><div class="tpl-field-lbl">4. Évaluation du setup</div><textarea class="tpl-field-inp" id="gf4" rows="2" placeholder="Ex: Les 3 conditions WTS sont-elles réunies : niveau + delta + volume ? Le setup est-il valide ou l'utilisateur a-t-il anticipé ? Y avait-il confirmation ?"></textarea></div>
                 <div class="tpl-field"><div class="tpl-field-lbl">5. Question coaching principale</div><textarea class="tpl-field-inp" id="gf5" rows="2" placeholder="Ex: Qu'est-ce qui t'a fait agir (ou ne pas agir) à ce moment précis — une règle définie ou une émotion ?"></textarea></div>
                 <div class="tpl-field"><div class="tpl-field-lbl">Règle WTS à rappeler</div><textarea class="tpl-field-inp" id="gf6" rows="2" placeholder="Ex: Pas de cassure sans confirmation. Si le niveau n'était pas marqué la veille, l'analyse est réactive — pas professionnelle."></textarea></div>
-              </div>
-            </div>
-
-            <!-- STRATEGIE form -->
+                <div class="tpl-field">
+                  <div class="tpl-field-lbl">Image de référence (optionnel)</div>
+                  <div class="tpl-img-zone" id="tpl-img-zone-grille" onclick="triggerTplImg('grille')" ondragover="event.preventDefault()" ondrop="handleTplImgDrop(event,'grille')">
+                    <img class="tpl-img-preview" id="tpl-img-preview-grille" style="display:none" src="" alt="Schéma">
+                    <div id="tpl-img-placeholder-grille">
+                      <div style="font-size:24px;margin-bottom:6px">🖼️</div>
+                      <div class="tpl-img-zone-txt">Glisse ou clique pour ajouter un schéma</div>
+                      <div class="tpl-img-zone-sub">PNG · JPG · WebP — Le coach verra cette image pour comprendre la grille</div>
+                    </div>
+                  </div>
+                  <div class="tpl-img-actions" id="tpl-img-actions-grille" style="display:none">
+                    <button class="tpl-img-change" onclick="triggerTplImg('grille')">Changer</button>
+                    <button class="tpl-img-del" onclick="removeTplImg('grille')">Supprimer</button>
+                  </div>
+                  <input type="file" id="tpl-img-file-grille" accept="image/*" style="display:none" onchange="handleTplImgFile(event,'grille')">
+                </div>
             <div class="tpl-fields" id="tf-strategie" style="display:none">
               <div class="tpl-form">
                 <div class="tpl-form-info">Décris le setup complet. Le coach s'en sert pour valider les trades et corriger l'exécution de l'utilisateur avec ta méthode exacte.</div>
@@ -950,10 +974,23 @@ html,body{height:100%;background:var(--bg);font-family:var(--fn);color:var(--t1)
                 <div class="tpl-field"><div class="tpl-field-lbl">Conditions d'invalidation (ne pas prendre si...)</div><textarea class="tpl-field-inp" id="sf6" rows="3" placeholder="• Delta négatif sur la bougie de cassure (absorption des vendeurs)&#10;• Volume inférieur à la moyenne sur la cassure&#10;• Cassure en dehors des heures liquides&#10;• Actualité macro imminente dans les 30 minutes&#10;• 3ème tentative de cassure ou plus (énergie épuisée)"></textarea></div>
                 <div class="tpl-field"><div class="tpl-field-lbl">Erreurs fréquentes à corriger chez l'utilisateur</div><textarea class="tpl-field-inp" id="sf7" rows="2" placeholder="Ex: Entrer avant la cassure (anticipation). Stop trop serré directement sous la VAH. Ne pas vérifier le delta. Entrer sur la 3ème cassure."></textarea></div>
                 <div class="tpl-field"><div class="tpl-field-lbl">Schéma / description visuelle</div><textarea class="tpl-field-inp" id="sf8" rows="4" placeholder="Décris schématiquement le setup pour que le coach puisse l'expliquer à l'utilisateur :&#10;&#10;[RÉSISTANCE: VAH] ← cassure ici&#10;[ZONE D'ACCUMULATION: 3-5 bougies] ← delta monte&#10;[SUPPORT: POC ou structure] ← stop ici&#10;&#10;Forme attendue : consolidation horizontale avec delta ascendant, puis bougie large avec volume."></textarea></div>
-              </div>
-            </div>
-
-            <!-- SCRIPT form -->
+                <div class="tpl-field">
+                  <div class="tpl-field-lbl">Image de la stratégie (optionnel)</div>
+                  <div class="tpl-img-zone" id="tpl-img-zone-strategie" onclick="triggerTplImg('strategie')" ondragover="event.preventDefault()" ondrop="handleTplImgDrop(event,'strategie')">
+                    <img class="tpl-img-preview" id="tpl-img-preview-strategie" style="display:none" src="" alt="Stratégie">
+                    <div id="tpl-img-placeholder-strategie">
+                      <div style="font-size:24px;margin-bottom:6px">📊</div>
+                      <div class="tpl-img-zone-txt">Glisse ou clique pour ajouter un chart exemple</div>
+                      <div class="tpl-img-zone-sub">PNG · JPG · WebP — Le coach analysera cette image pour comprendre le setup exact</div>
+                    </div>
+                  </div>
+                  <div class="tpl-img-actions" id="tpl-img-actions-strategie" style="display:none">
+                    <button class="tpl-img-change" onclick="triggerTplImg('strategie')">Changer</button>
+                    <button class="tpl-img-del" onclick="removeTplImg('strategie')">Supprimer</button>
+                  </div>
+                  <input type="file" id="tpl-img-file-strategie" accept="image/*" style="display:none" onchange="handleTplImgFile(event,'strategie')">
+                  <div class="tpl-img-info">💡 Idéal : un screenshot annoté de ton logiciel (ATAS, Sierra Chart...) montrant un exemple réel du setup avec les niveaux marqués.</div>
+                </div>
             <div class="tpl-fields" id="tf-script" style="display:none">
               <div class="tpl-form">
                 <div class="tpl-form-info">Séquence de questions que le coach pose dans l'ordre. Le coach suit ce script pour guider l'utilisateur — débriefing, préparation, analyse guidée.</div>
@@ -964,10 +1001,22 @@ html,body{height:100%;background:var(--bg);font-family:var(--fn);color:var(--t1)
                 <div class="tpl-field"><div class="tpl-field-lbl">Question 3 — Exécution (confrontation)</div><textarea class="tpl-field-inp" id="scf4" rows="2" placeholder="Ex: Ce qui t'a fait entrer (ou hésiter) à CE moment précis — c'était une règle définie à l'avance, ou une émotion ?"></textarea></div>
                 <div class="tpl-field"><div class="tpl-field-lbl">Question 4 — Apprentissage (extraction)</div><textarea class="tpl-field-inp" id="scf5" rows="2" placeholder="Ex: Si tu devais formuler en une seule phrase la règle que ce trade t'a apprise — ce serait quoi ?"></textarea></div>
                 <div class="tpl-field"><div class="tpl-field-lbl">Conclusion coaching (règle + exercice)</div><textarea class="tpl-field-inp" id="scf6" rows="2" placeholder="Ex: Rappeler la règle WTS correspondante et proposer un exercice concret : backtest, replay, ou exercice de préparation pour demain."></textarea></div>
-              </div>
-            </div>
-
-            <!-- MARCHE form -->
+                <div class="tpl-field">
+                  <div class="tpl-field-lbl">Image de référence (optionnel)</div>
+                  <div class="tpl-img-zone" id="tpl-img-zone-script" onclick="triggerTplImg('script')" ondragover="event.preventDefault()" ondrop="handleTplImgDrop(event,'script')">
+                    <img class="tpl-img-preview" id="tpl-img-preview-script" style="display:none" src="" alt="Script">
+                    <div id="tpl-img-placeholder-script">
+                      <div style="font-size:24px;margin-bottom:6px">🖼️</div>
+                      <div class="tpl-img-zone-txt">Glisse ou clique pour ajouter une image</div>
+                      <div class="tpl-img-zone-sub">PNG · JPG · WebP — Ex: schéma du processus de débriefing</div>
+                    </div>
+                  </div>
+                  <div class="tpl-img-actions" id="tpl-img-actions-script" style="display:none">
+                    <button class="tpl-img-change" onclick="triggerTplImg('script')">Changer</button>
+                    <button class="tpl-img-del" onclick="removeTplImg('script')">Supprimer</button>
+                  </div>
+                  <input type="file" id="tpl-img-file-script" accept="image/*" style="display:none" onchange="handleTplImgFile(event,'script')">
+                </div>
             <div class="tpl-fields" id="tf-marche" style="display:none">
               <div class="tpl-form">
                 <div class="tpl-form-info">Fiche de référence par instrument. Le coach l'utilise pour contextualiser ses analyses et adapter ses corrections au marché spécifique.</div>
@@ -977,10 +1026,22 @@ html,body{height:100%;background:var(--bg);font-family:var(--fn);color:var(--t1)
                 <div class="tpl-field"><div class="tpl-field-lbl">Niveaux de référence récurrents</div><textarea class="tpl-field-inp" id="mf3" rows="3" placeholder="Ex: Niveaux psychologiques ronds (18000, 17500, 17000, 16500)&#10;Quarter points (18250, 18500...)&#10;VAH/VAL/POC de la semaine précédente (WHH, WHL)&#10;VWAP mensuel et trimestriel"></textarea></div>
                 <div class="tpl-field"><div class="tpl-field-lbl">Comportements Order Flow typiques</div><textarea class="tpl-field-inp" id="mf4" rows="4" placeholder="Ex:&#10;• Forte absorption fréquente sur les niveaux overnight en pré-marché&#10;• Les breakouts sans volume > 2000 contrats sur la bougie = souvent faux&#10;• Le delta diverge souvent 2-3 bougies avant un retournement majeur&#10;• Déséquilibres dans le carnet le matin souvent effacés avant midi ET"></textarea></div>
                 <div class="tpl-field"><div class="tpl-field-lbl">Erreurs courantes des débutants sur ce marché</div><textarea class="tpl-field-inp" id="mf5" rows="3" placeholder="Ex:&#10;• Trader les 5 premières minutes de l'ouverture sans attendre la confirmation (09h45 ET minimum)&#10;• Confondre le move overnight/pré-marché avec la direction journalière&#10;• Sous-estimer la volatilité lors des données macro US (stopper les positions 30 min avant)"></textarea></div>
-              </div>
-            </div>
-
-            <div class="tpl-editor-footer">
+                <div class="tpl-field">
+                  <div class="tpl-field-lbl">Image de référence du marché (optionnel)</div>
+                  <div class="tpl-img-zone" id="tpl-img-zone-marche" onclick="triggerTplImg('marche')" ondragover="event.preventDefault()" ondrop="handleTplImgDrop(event,'marche')">
+                    <img class="tpl-img-preview" id="tpl-img-preview-marche" style="display:none" src="" alt="Marché">
+                    <div id="tpl-img-placeholder-marche">
+                      <div style="font-size:24px;margin-bottom:6px">📈</div>
+                      <div class="tpl-img-zone-txt">Glisse ou clique pour ajouter un chart de référence</div>
+                      <div class="tpl-img-zone-sub">PNG · JPG · WebP — Ex: structure typique du marché, niveaux clés annotés</div>
+                    </div>
+                  </div>
+                  <div class="tpl-img-actions" id="tpl-img-actions-marche" style="display:none">
+                    <button class="tpl-img-change" onclick="triggerTplImg('marche')">Changer</button>
+                    <button class="tpl-img-del" onclick="removeTplImg('marche')">Supprimer</button>
+                  </div>
+                  <input type="file" id="tpl-img-file-marche" accept="image/*" style="display:none" onchange="handleTplImgFile(event,'marche')">
+                </div>
               <span class="tpl-footer-meta" id="tpl-footer-meta">Nouveau template</span>
               <button class="tpl-save-btn" onclick="saveTpl()">Enregistrer</button>
             </div>
@@ -1504,24 +1565,37 @@ progCtx+
 function callClaude(txt,imgB64,onOk,onErr){
   var relSrc=findRelSrc(txt);
   var tpl=getActiveTpl();
-  var uc=imgB64?[{type:'image',source:{type:'base64',media_type:imgB64.match(/data:(.*?);/)[1],data:imgB64.split(',')[1]}},{type:'text',text:txt}]:txt;
+  var tplImg=tpl&&tpl.image?tpl.image:null;
 
-  // Use Netlify proxy if no local API key (production mode)
-  // Use direct Anthropic API if local key is set (dev/admin mode)
-  var endpoint = S.apiKey
-    ? 'https://api.anthropic.com/v1/messages'
-    : '/.netlify/functions/claude';
-
-  var headers = {'Content-Type':'application/json'};
-  if(S.apiKey){
-    headers['x-api-key'] = S.apiKey;
-    headers['anthropic-version'] = '2023-06-01';
-    headers['anthropic-dangerous-direct-browser-access'] = 'true';
+  // Build user content — may include chart image + template image
+  var uc;
+  if(imgB64&&tplImg){
+    // Both chart and template image
+    uc=[
+      {type:'image',source:{type:'base64',media_type:imgB64.match(/data:(.*?);/)[1],data:imgB64.split(',')[1]}},
+      {type:'image',source:{type:'base64',media_type:tplImg.match(/data:(.*?);/)[1],data:tplImg.split(',')[1]}},
+      {type:'text',text:txt+'\n\n[Note: La première image est le chart de l\'utilisateur. La deuxième image est le schéma de référence du template "'+tpl.name+'" — utilise-la pour comparer avec le chart de l\'utilisateur.]'}
+    ];
+  } else if(imgB64){
+    uc=[{type:'image',source:{type:'base64',media_type:imgB64.match(/data:(.*?);/)[1],data:imgB64.split(',')[1]}},{type:'text',text:txt}];
+  } else if(tplImg){
+    // Template image only (no chart from user)
+    uc=[
+      {type:'image',source:{type:'base64',media_type:tplImg.match(/data:(.*?);/)[1],data:tplImg.split(',')[1]}},
+      {type:'text',text:txt+'\n\n[Note: Cette image est le schéma de référence du template "'+tpl.name+'". Utilise-la comme référence pour ta réponse.]'}
+    ];
+  } else {
+    uc=txt;
   }
+
+  var onNetlify=window.location.hostname.includes('netlify.app')||window.location.hostname.includes('netlify.com');
+  var endpoint=S.apiKey?'https://api.anthropic.com/v1/messages':'/.netlify/functions/claude';
+  var headers={'Content-Type':'application/json'};
+  if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';headers['anthropic-dangerous-direct-browser-access']='true';}
 
   fetch(endpoint,{
     method:'POST',
-    headers: headers,
+    headers:headers,
     body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,system:buildSys(),messages:[{role:'user',content:uc}]})
   }).then(function(r){return r.json();}).then(function(d){
     if(d.error){onErr(d.error.message);return;}
@@ -1772,6 +1846,7 @@ function editTpl(id){
   allFields.forEach(function(fid){var el=document.getElementById(fid);if(el)el.value=fields[fid]||'';});
   switchTplForm();renderTplList();
   updateTplMeta();
+  loadTplImgIntoEditor(tpl);
 }
 
 function switchTplForm(){
@@ -1817,7 +1892,81 @@ function updateTplMeta(){
   var meta=document.getElementById('tpl-footer-meta');if(!meta)return;
   if(!S.curTplId){meta.textContent='Nouveau template';return;}
   var tpl=S.templates.find(function(t){return t.id===S.curTplId;});
-  if(tpl)meta.textContent=tpl.type+' · '+(tpl.auto?'Auto-activé au chart upload':'Activation manuelle');
+  if(tpl)meta.textContent=tpl.type+' · '+(tpl.auto?'Auto-activé au chart upload':'Activation manuelle')+(tpl.image?' · 📷 Image':'');
+}
+
+// ══════════════════════════════════
+// TEMPLATE IMAGES
+// ══════════════════════════════════
+function triggerTplImg(type){
+  document.getElementById('tpl-img-file-'+type).click();
+}
+
+function handleTplImgFile(e,type){
+  var f=e.target.files[0];if(!f)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){setTplImg(type,ev.target.result);};
+  reader.readAsDataURL(f);
+  e.target.value='';
+}
+
+function handleTplImgDrop(e,type){
+  e.preventDefault();
+  var f=e.dataTransfer.files[0];if(!f||!f.type.startsWith('image/'))return;
+  var reader=new FileReader();
+  reader.onload=function(ev){setTplImg(type,ev.target.result);};
+  reader.readAsDataURL(f);
+}
+
+function setTplImg(type,dataUrl){
+  var preview=document.getElementById('tpl-img-preview-'+type);
+  var placeholder=document.getElementById('tpl-img-placeholder-'+type);
+  var actions=document.getElementById('tpl-img-actions-'+type);
+  var zone=document.getElementById('tpl-img-zone-'+type);
+  if(preview){preview.src=dataUrl;preview.style.display='block';}
+  if(placeholder)placeholder.style.display='none';
+  if(actions)actions.style.display='flex';
+  if(zone)zone.classList.add('has-img');
+  // Store on current template being edited
+  if(S.curTplId){
+    var tpl=S.templates.find(function(t){return t.id===S.curTplId;});
+    if(tpl){tpl.image=dataUrl;saveTpls();}
+  }
+  updateTplMeta();
+}
+
+function removeTplImg(type){
+  var preview=document.getElementById('tpl-img-preview-'+type);
+  var placeholder=document.getElementById('tpl-img-placeholder-'+type);
+  var actions=document.getElementById('tpl-img-actions-'+type);
+  var zone=document.getElementById('tpl-img-zone-'+type);
+  if(preview){preview.src='';preview.style.display='none';}
+  if(placeholder)placeholder.style.display='block';
+  if(actions)actions.style.display='none';
+  if(zone)zone.classList.remove('has-img');
+  if(S.curTplId){
+    var tpl=S.templates.find(function(t){return t.id===S.curTplId;});
+    if(tpl){delete tpl.image;saveTpls();}
+  }
+  updateTplMeta();
+}
+
+function loadTplImgIntoEditor(tpl){
+  // Reset all image zones first
+  ['grille','strategie','script','marche'].forEach(function(type){
+    var preview=document.getElementById('tpl-img-preview-'+type);
+    var placeholder=document.getElementById('tpl-img-placeholder-'+type);
+    var actions=document.getElementById('tpl-img-actions-'+type);
+    var zone=document.getElementById('tpl-img-zone-'+type);
+    if(preview){preview.src='';preview.style.display='none';}
+    if(placeholder)placeholder.style.display='block';
+    if(actions)actions.style.display='none';
+    if(zone)zone.classList.remove('has-img');
+  });
+  // Load image for current template type
+  if(tpl&&tpl.image){
+    setTplImg(tpl.type,tpl.image);
+  }
 }
 </script>
 </body>
