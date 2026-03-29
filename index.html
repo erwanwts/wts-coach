@@ -1165,15 +1165,15 @@ function finishOnboarding(){
     saveProgramme();
   }
   document.getElementById('ob').classList.add('hidden');
-  if(S.codes.length>0){
-    if(isSessionValid()){
-      // Restore name from account if available
-      var email=localStorage.getItem('wts_access_email');
-      var acc=S.codes.find(function(a){return a.email===email;});
-      if(acc&&acc.firstname&&!S.name)S.name=acc.firstname;
-      launchApp();
-    }else{showGate();}
-  }else{launchApp();}
+  if(isSessionValid()){
+    // Restore name from account if available
+    var email=localStorage.getItem('wts_access_email');
+    var acc=S.codes.find(function(a){return a.email===email;});
+    if(acc&&acc.firstname&&!S.name)S.name=acc.firstname;
+    launchApp();
+  }else{
+    showGate();
+  }
 }
 
 function saveProgramme(){
@@ -1199,8 +1199,11 @@ function submitGate(){
   var pwd=document.getElementById('gate-pwd').value.trim();
   if(!email||!pwd){shakeGate();return;}
 
-  // Free access if no accounts configured yet (test mode)
-  if(!S.codes.length){document.getElementById('gate').classList.add('hidden');launchApp();return;}
+  // Block if no accounts configured
+  if(!S.codes.length){
+    document.getElementById('gate-err').textContent='Aucun accès configuré. Contacte WTS.';
+    return;
+  }
 
   var acc=S.codes.find(function(a){return a.email===email&&a.active;});
   if(!acc){
@@ -1245,7 +1248,7 @@ function isSessionValid(){
   var email=localStorage.getItem('wts_access_email');
   var token=localStorage.getItem('wts_access_token');
   if(!email||!token)return false;
-  if(!S.codes.length)return true; // test mode
+  if(!S.codes.length)return false; // no accounts = no access
   var acc=S.codes.find(function(a){return a.email===email&&a.active;});
   if(!acc)return false;
   return acc.deviceToken===token;
