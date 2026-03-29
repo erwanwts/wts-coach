@@ -1111,7 +1111,8 @@ var S = {
   lastVisit: null,           // ISO date string — for daily check-in
   sessionCount: 0,           // lifetime session count
   sessionFirstMsg: true,     // flag: has the user sent their first msg this session?
-  market: 'nasdaq'             // preferred market
+  market: 'nasdaq',            // preferred market
+  history: []                  // conversation history [{role,content}]
 };
 
 // ── Restore persisted programme data ──
@@ -1353,6 +1354,7 @@ function launchApp(){
   var h=new Date().getHours();
   document.getElementById('sess-time').textContent=h<10?'Pré-marché':h<15?'Session EU':h<22?'Session US':'After hours';
   S.sessN=1;document.getElementById('sess-num').textContent='Session #1';
+  S.history=[];
   if(S.demo)document.getElementById('status-txt').textContent='Mode démo';
   updKBPill();renderTplDropdown();updMarketPanel();
   var autoGrille=S.templates.find(function(t){return t.type==='grille'&&t.auto;});
@@ -1727,14 +1729,25 @@ function callClaude(txt,imgB64,onOk,onErr){
   var headers={'Content-Type':'application/json'};
   if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';headers['anthropic-dangerous-direct-browser-access']='true';}
 
+  // Build messages with history (keep last 10 exchanges = 20 messages)
+  var historyMsgs = S.history.slice(-20);
+  var allMessages = historyMsgs.concat([{role:'user',content:uc}]);
+
+  // Save user message to history
+  S.history.push({role:'user', content: typeof uc === 'string' ? uc : txt});
+
   fetch(endpoint,{
     method:'POST',
     headers:headers,
-    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,system:buildSys(),messages:[{role:'user',content:uc}]})
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,system:buildSys(),messages:allMessages})
   }).then(function(r){return r.json();}).then(function(d){
     if(d.error){onErr(d.error.message);return;}
     var t=d.content&&d.content[0]&&d.content[0].text;
-    if(t)onOk(t,relSrc?relSrc.title:null,tpl?tpl.name:null,tpl?tpl.type:null);else onErr('Réponse vide.');
+    if(t){
+      // Save assistant response to history
+      S.history.push({role:'assistant', content:t});
+      onOk(t,relSrc?relSrc.title:null,tpl?tpl.name:null,tpl?tpl.type:null);
+    }else onErr('Réponse vide.');
   }).catch(function(e){onErr(e.message);});
 }
 
